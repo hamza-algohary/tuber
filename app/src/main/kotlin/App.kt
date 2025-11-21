@@ -124,7 +124,7 @@ fun handleCLIExceptions(func : ()->Unit) =
     try {
         func()
     } catch(e : Exception) {
-        when(e) {
+        when (e) {
             is TooFewArgumentsException -> error("Too few arguments. ${e.message}")
             is UnknownCommandException -> error("Unknown command ${e.command}")
             is UnableToHandleLinkException -> error("Unable to handle link ${e.link}")

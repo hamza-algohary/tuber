@@ -4,3 +4,6 @@ compile:
 
 test:
 	DEBUG=true ./gradlew test
+
+clean:
+	rm tuber.jar

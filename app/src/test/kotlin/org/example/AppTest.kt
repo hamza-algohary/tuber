@@ -3,10 +3,16 @@
  */
 package org.example
 
+import OkHttpDownloader
 import attemptUntilOneSucceeds
 import backend
 import main
+import org.schabi.newpipe.extractor.NewPipe
+import org.schabi.newpipe.extractor.ServiceList
+import org.schabi.newpipe.extractor.search.SearchInfo
 import services.Backend
+import services.newpipe.*
+import services.newpipe.fromJson
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
@@ -42,6 +48,22 @@ class AppTest {
     @Test fun testCLIStreamYoutube() = testMain("stream","https://www.youtube.com/watch?v=bB9z2HEldNw" , testName = "youtube_stream.json")
     @Test fun testCLIChannelYoutube() = testMain("channel","https://www.youtube.com/@TheLinuxEXP" , testName = "youtube_channel.json")
     @Test fun testCLIPlaylistYoutube() = testMain("playlist" , "https://www.youtube.com/playlist?list=PLqmbcbI8U55EQLnXs1ehDw5-D94vloCzb" , testName = "youtube_playlist.json")
+
+    @Test fun testSearchNextPageDeserialization() {
+        NewPipe.init(OkHttpDownloader())
+        fromJson<NextPage>(
+            NextPage.SearchNextPage(
+                "youtube",
+                "linux",
+                SearchInfo.getInfo(
+                    ServiceList.YouTube ,
+                    ServiceList.YouTube.searchQHFactory.fromQuery("linux")
+                ).nextPage
+            ).toJson()
+        ).items.items.take(3).let {
+            println(json.encodeToString(it))
+        }
+    }
 
     /*@Test fun testCLI() {
         testCLISearchYoutube()

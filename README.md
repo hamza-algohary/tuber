@@ -1,6 +1,6 @@
 # Tuber
 
-Tuber is a CLI frontend for YouTube, PeerTube, SoundCloud and other sites, powered by the fantastic [NewPipeExtractor] java library.
+Tuber is a CLI frontend for YouTube, PeerTube, SoundCloud and other sites, powered by the fantastic [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) java library.
 
 Moreover, tuber is suitable for usage as a backend since all its output is in JSON format.
 
@@ -33,4 +33,6 @@ commands:
     channel  <url>                                  -> ChannelInfo
     help
 ```
-All output is in JSON. To know structure of resulted JSONs, please refer to [app/src/main/kotlin/backend/Backend.kt](app/src/main/kotlin/backend/Backend.kt)
+All output is in JSON. To know structure of resulted JSONs, please refer to [app/src/main/kotlin/backend/Backend.kt](app/src/main/kotlin/backend/Backend.kt).
+
+In case of an error the program exit code is 1 and error message is printed. **Maybe we should assign every error a sepecific error code?**
