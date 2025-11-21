@@ -4,12 +4,25 @@ Tuber is a CLI frontend for YouTube, PeerTube, SoundCloud and other sites, power
 
 Moreover, tuber is suitable for usage as a backend since all its output is in JSON format.
 
-# Usage as a server
-
-### Available commands
-
+### Installation
+1. Clone this repo
+```
+git clone https://github.com/hamza-algohary/tuber
+```
+2. Build
+```
+make
+```
+3. Give execution permission
+```
+chmod +x tuber.jar
+```
+4. Run the program
+```
+java -jar tuber.jar help
+```
+### Usage
 On running `tuber help`:
-
 ```
 commands:
     search-providers                                -> List<String>
@@ -20,5 +33,4 @@ commands:
     channel  <url>                                  -> ChannelInfo
     help
 ```
-
 All output is in JSON. To know structure of resulted JSONs, please refer to [app/src/main/kotlin/backend/Backend.kt](app/src/main/kotlin/backend/Backend.kt)
