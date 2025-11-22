@@ -35,6 +35,8 @@ commands:
 ```
 All output is in JSON. To know structure of resulted JSONs, please refer to [app/src/main/kotlin/backend/Backend.kt](app/src/main/kotlin/backend/Backend.kt).
 
+Also run `make test` to see all JSON outputs in `app/test_results`
+
 In case of an error the program exit code is 1 and error message is printed. **Maybe we should assign every error a sepecific error code?**
 
 **TODO: Add support for search filters**
