@@ -33,7 +33,7 @@ commands:
     channel  <url>                                  -> ChannelInfo
     help
 ```
-All output is in JSON. To know structure of resulted JSONs, please refer to [app/src/main/kotlin/backend/Data.kt](app/src/main/kotlin/backend/Backend.kt).
+All output is in JSON. To know structure of resulted JSONs, please refer to [app/src/main/kotlin/backend/Data.kt](app/src/main/kotlin/backend/Data.kt).
 
 Also run `make test` to see all JSON outputs in `app/test_results`
 
