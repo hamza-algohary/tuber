@@ -24,19 +24,28 @@ java -jar tuber.jar help
 ### Usage
 On running `tuber help`:
 ```bash
-commands:
-    search-providers                                -> List<String>
-    search   <search provider> <query> [filters]    -> SearchResult
-    more     <pageToken>                            -> Items
-    stream   <url>                                  -> StreamInfo
-    playlist <url>                                  -> PlaylistInfo
-    channel  <url>                                  -> ChannelInfo
-    help
+    Search Commands:
+        search-providers                                -> List<String> 
+        search <search provider> <query> [--filters <colon separated list>] [--sort <criteria>] -> SearchResult
+        filters  <search provider>                      -> List<String>
+        sort-options <search provider>                  -> List<String>
+    Url Handlers:
+        stream   <url>                                  -> StreamInfo
+        playlist <url>                                  -> PlaylistInfo
+        channel  <url>                                  -> ChannelInfo
+    Page Tokens Handler
+        more     <pageToken>                            -> Items
+    Catalogs/Recommendations
+        catalogs                                        -> List<String>
+        catalog  <catalog provider>                     -> List<PlaylistInfo>
 ```
+Example
+```bash
+java -jar tuber.jar search youtube "linux" --filters video:audio --sort date
+```
+
 All output is in JSON. To know structure of resulted JSONs, please refer to [app/src/main/kotlin/backend/Data.kt](app/src/main/kotlin/backend/Data.kt).
 
 Also run `make test` to see all JSON outputs in `app/test_results`
 
 In case of an error the program exit code is 1 and error message is printed. **Maybe we should assign every error a sepecific error code?**
-
-**TODO: Add support for search filters**

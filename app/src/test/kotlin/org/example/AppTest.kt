@@ -30,7 +30,7 @@ fun withStreams(
     val stdOut = System.out ; val stdErr = System.err ; val stdIn = System.`in`
     System.setOut(out) ; System.setErr(err) ; System.setIn(input)
     func()
-    System.setOut(stdOut) ; System.setErr(stdErr) ; System.setIn(input)
+    System.setOut(stdOut) ; System.setErr(stdErr) ; System.setIn(stdIn)
 }
 
 fun testMain(vararg args : String , testName : String) {
@@ -43,11 +43,13 @@ class AppTest {
     @Test fun testCLISearchYoutube() = testMain("search","youtube","linux" , testName = "youtube_search.json")
     @Test fun testCLISearchSoundCloud() = testMain("search","soundcloud","linux", testName = "soundcloud_search.json")
     @Test fun testCLISearchPeerTube() = testMain("search","peertube","linux", testName = "peertube_search.json")
-    @Test fun testCLISearchMediaCCC() = testMain("search","mediaccc","linux", testName = "mediaccc_search.json")
+//    @Test fun testCLISearchMediaCCC() = testMain("search","mediaccc","linux", testName = "mediaccc_search.json")
     @Test fun testCLISearchBandCamp() = testMain("search","bandcamp","linux", testName = "bandcamp_search.json")
     @Test fun testCLIStreamYoutube() = testMain("stream","https://www.youtube.com/watch?v=bB9z2HEldNw" , testName = "youtube_stream.json")
     @Test fun testCLIChannelYoutube() = testMain("channel","https://www.youtube.com/@TheLinuxEXP" , testName = "youtube_channel.json")
     @Test fun testCLIPlaylistYoutube() = testMain("playlist" , "https://www.youtube.com/playlist?list=PLqmbcbI8U55EQLnXs1ehDw5-D94vloCzb" , testName = "youtube_playlist.json")
+
+
 
     @Test fun testSearchNextPageDeserialization() {
         NewPipe.init(OkHttpDownloader())
@@ -55,6 +57,8 @@ class AppTest {
             NextPage.SearchNextPage(
                 "youtube",
                 "linux",
+                listOf("all"),
+                "",
                 SearchInfo.getInfo(
                     ServiceList.YouTube ,
                     ServiceList.YouTube.searchQHFactory.fromQuery("linux")

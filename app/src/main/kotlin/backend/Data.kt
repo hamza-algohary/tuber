@@ -171,7 +171,9 @@ enum class AudioTrackType {
 }
 
 enum class PlaylistType {
-    NORMAL,MIX_VIDEO,MIX_MUSIC,MIX_MUSIC_GENRE
+    NORMAL,MIX_VIDEO,MIX_MUSIC,MIX_MUSIC_GENRE,
+    /** A playlist that may contain streams, playlists, channels and all types of summaries */
+    SUPER
 }
 @Serializable
 data class Thumbnail(val url : String , val width : Int , val height : Int)

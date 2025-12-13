@@ -7,13 +7,14 @@ import services.Stream
 import services.StreamType
 import org.schabi.newpipe.extractor.*
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabInfo
+import org.schabi.newpipe.extractor.kiosk.KioskInfo
 import org.schabi.newpipe.extractor.stream.*
 import java.time.LocalTime
 import java.time.ZoneOffset
 
 // =============== Search and Summaries =============
 fun NewPipeSearchInfo.toSearchResult() : SearchResult =
-    SearchResult(Items(relatedItems.toSummaries() , NextPage.SearchNextPage(service.name , searchString , nextPage).toJson()) , searchSuggestion , isCorrectedSearch)
+    SearchResult(Items(relatedItems.toSummaries() , NextPage.SearchNextPage(service.name , searchString , contentFilters , sortFilter , nextPage).toJson()) , searchSuggestion , isCorrectedSearch)
 
 fun InfoItem.toSummary() : Summary? =
     when {
@@ -199,6 +200,24 @@ fun ChannelTabInfo.toPlaylistInfo() : Info.PlaylistInfo =
             NextPage.TabNextPage(service.name ,nextPage , originalUrl , url, id, contentFilters, sortFilter).toJson() ,
         ) ,
         null , null , emptyList() , emptyList() ,null
+    )
+
+fun KioskInfo.toPlaylistInfo() : Info.PlaylistInfo =
+    Info.PlaylistInfo(
+        id=id , name=name , url = url , originalUrl=originalUrl ,
+        service = service.name , null ,
+        Items(
+            relatedItems.toSummaries() ,
+            nextPageToken = NextPage.KioskNextPage(service.name , url , nextPage).toJson()
+        ),
+        uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = null
+    )
+
+fun SearchResult.toPlaylistInfo(name : String , service : StreamingService , playlistType: PlaylistType = PlaylistType.SUPER) : Info.PlaylistInfo =
+    Info.PlaylistInfo (
+        id = null , name = name , url = null , originalUrl = null ,
+        service = service.name , null ,
+        items , uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = playlistType
     )
 
 // ================= Helper Classes ======================
