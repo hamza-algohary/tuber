@@ -33,6 +33,8 @@ fun NewPipeStreamInfoItem.toStreamSummary() : Summary.StreamSummary =
         url ,
         thumbnails.map(Image::toThumbnail).toList() ,
         service.name,
+        emptyList(),
+        emptyList(),
         streamType.toStreamType() ,
         duration ,
         viewCount ,
@@ -43,6 +45,8 @@ fun NewPipeStreamInfoItem.toStreamSummary() : Summary.StreamSummary =
             uploaderUrl?:"" ,
             uploaderAvatars?.map(Image::toThumbnail)?:emptyList() ,
             service.name,
+            emptyList(),
+            emptyList(),
             isUploaderVerified ,
             null ,
             null ,
@@ -56,8 +60,13 @@ fun NewPipePlaylistInfoItem.toPlaylistSummary() : Summary.PlaylistSummary =
         url ,
         thumbnails?.map(Image::toThumbnail)?:emptyList() ,
         service.name,
+        emptyList(),
+        emptyList(),
         Summary.ChannelSummary(
-            uploaderName , uploaderUrl?:"" , emptyList() , service.name , isUploaderVerified , null , null , null
+            uploaderName , uploaderUrl?:"" , emptyList() , service.name ,
+            emptyList(),
+            emptyList(),
+            isUploaderVerified , null , null , null
         ) ,
         streamCount ,
         description.toFormattedText() ,
@@ -70,6 +79,8 @@ fun NewPipeChannelInfoItem.toChannelSummary() : Summary.ChannelSummary =
         url ,
         thumbnails?.map(Image::toThumbnail)?:emptyList() ,
         service.name,
+        emptyList(),
+        emptyList(),
         isVerified ,
         FormattedText.Plain(description?:"") ,
         subscriberCount ,
@@ -85,6 +96,8 @@ fun NewPipeStreamInfo.toStreamInfo() : Info.StreamInfo =
         url,
         originalUrl,
         service.name,
+        emptyList(),
+        emptyList(),
         streamType.toStreamType(),
         thumbnails?.map(Image::toThumbnail)?:emptyList(),
         uploadDate.offsetDateTime().toLocalDate().toEpochSecond(LocalTime.now(), ZoneOffset.UTC),
@@ -99,6 +112,8 @@ fun NewPipeStreamInfo.toStreamInfo() : Info.StreamInfo =
             uploaderUrl,
             uploaderAvatars?.map(Image::toThumbnail)?:emptyList(),
             service.name,
+            emptyList(),
+            emptyList(),
             isUploaderVerified,
             subscriberCount = uploaderSubscriberCount,
             description = null,
@@ -109,6 +124,8 @@ fun NewPipeStreamInfo.toStreamInfo() : Info.StreamInfo =
             subChannelUrl,
             subChannelAvatars?.map(Image::toThumbnail)?:emptyList(),
             service.name,
+            emptyList(),
+            emptyList(),
             null,
             null,
             null,
@@ -131,7 +148,10 @@ fun NewPipeStreamInfo.toStreamInfo() : Info.StreamInfo =
     )
 fun NewPipePlaylistInfo.toPlaylistInfo() : Info.PlaylistInfo =
     Info.PlaylistInfo(
-        id, name, url, originalUrl, service.name, description.toFormattedText(),
+        id, name, url, originalUrl, service.name,
+        emptyList(),
+        emptyList(),
+        description.toFormattedText(),
         Items(
             relatedItems.toSummaries() ,
             NextPage.PlaylistNextPage(service.name, url, nextPage).toJson()
@@ -141,6 +161,9 @@ fun NewPipePlaylistInfo.toPlaylistInfo() : Info.PlaylistInfo =
             uploaderUrl,
             uploaderAvatars?.map(Image::toThumbnail)?:emptyList(),
             service.name,
+            emptyList(),
+            emptyList(),
+
             null,
             null,
             null,
@@ -151,6 +174,9 @@ fun NewPipePlaylistInfo.toPlaylistInfo() : Info.PlaylistInfo =
             subChannelUrl,
             subChannelAvatars?.map(Image::toThumbnail)?:emptyList(),
             service.name,
+            emptyList(),
+            emptyList(),
+
             null,
             null,
             null,
@@ -165,11 +191,16 @@ fun NewPipeChannelInfo.toChannelInfo() : Info.ChannelInfo =
         url,
         originalUrl,
         service.name,
+        emptyList(),
+        emptyList(),
         Summary.ChannelSummary(
             parentChannelName,
             parentChannelUrl,
             parentChannelAvatars?.map(Image::toThumbnail)?:emptyList(),
             service.name,
+            emptyList(),
+            emptyList(),
+
             null,
             null,
             null,
@@ -194,7 +225,10 @@ fun NewPipeChannelInfo.toChannelInfo() : Info.ChannelInfo =
 fun ChannelTabInfo.toPlaylistInfo() : Info.PlaylistInfo =
     Info.PlaylistInfo(
         id=id, name=name, url=url, originalUrl = originalUrl,
-        service = service.name , null ,
+        service = service.name ,
+        emptyList(),
+        emptyList(),
+        null ,
         Items(
             relatedItems.toSummaries() ,
             NextPage.TabNextPage(service.name ,nextPage , originalUrl , url, id, contentFilters, sortFilter).toJson() ,
@@ -205,7 +239,10 @@ fun ChannelTabInfo.toPlaylistInfo() : Info.PlaylistInfo =
 fun KioskInfo.toPlaylistInfo() : Info.PlaylistInfo =
     Info.PlaylistInfo(
         id=id , name=name , url = url , originalUrl=originalUrl ,
-        service = service.name , null ,
+        service = service.name ,
+        emptyList(),
+        emptyList(),
+        null ,
         Items(
             relatedItems.toSummaries() ,
             nextPageToken = NextPage.KioskNextPage(service.name , url , nextPage).toJson()
@@ -216,7 +253,10 @@ fun KioskInfo.toPlaylistInfo() : Info.PlaylistInfo =
 fun SearchResult.toPlaylistInfo(name : String , service : StreamingService , playlistType: PlaylistType = PlaylistType.SUPER) : Info.PlaylistInfo =
     Info.PlaylistInfo (
         id = null , name = name , url = null , originalUrl = null ,
-        service = service.name , null ,
+        service = service.name ,
+        emptyList(),
+        emptyList(),
+        null ,
         items , uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = playlistType
     )
 

@@ -24,16 +24,20 @@ sealed class Summary {
     abstract val url : String?
     abstract val thumbnails : List<Thumbnail>
     abstract val service : String?
-
+    abstract val description : FormattedText?
+    abstract val categories : List<Category>
+    abstract val related : List<Related>
     @Serializable
     @SerialName("stream")
     data class StreamSummary(
         override val name : String?, override val url : String?, override val thumbnails : List<Thumbnail>, override val service: String?,
+        override val categories: List<Category>,
+        override val related: List<Related>,
         val streamType : StreamType?,
         val duration : Long?,
         val views : Long?,
         @Contextual val uploadDateUnixEpoch : Long?,
-        val description : FormattedText?,
+        override val description : FormattedText?,
         val uploader : ChannelSummary?
     ) : Summary()
 
@@ -41,9 +45,11 @@ sealed class Summary {
     @SerialName("playlist")
     data class PlaylistSummary(
         override val name : String?, override val url : String?, override val thumbnails : List<Thumbnail>, override val service: String?,
+        override val categories: List<Category>,
+        override val related: List<Related>,
         val uploader: ChannelSummary?,
         val streamCount: Long?,
-        val description : FormattedText?,
+        override val description : FormattedText?,
         val playlistType : PlaylistType?
     ) : Summary()
 
@@ -51,8 +57,10 @@ sealed class Summary {
     @SerialName("channel")
     data class ChannelSummary(
         override val name : String?, override val url : String?, override val thumbnails : List<Thumbnail>, override val service: String?,
+        override val categories: List<Category>,
+        override val related: List<Related>,
         val verified: Boolean?,
-        val description : FormattedText?,
+        override val description : FormattedText?,
         val subscriberCount : Long?,
         val streamCount : Long?,
     ) : Summary()
@@ -68,12 +76,17 @@ sealed class Info {
     abstract val url : String?
     abstract val originalUrl : String?
     abstract val service : String?
+    abstract val categories : List<Category>
+    abstract val related : List<Related>
     @Serializable data class StreamInfo(
         override val id : String?,
         override val name : String?,
         override val url : String?,
         override val originalUrl : String?,
         override val service: String?,
+        override val categories: List<Category>,
+        override val related: List<Related>,
+
         val type : StreamType?,
         val thumbnails: List<Thumbnail>,
         val uploadTimeStamp: Long?,
@@ -109,6 +122,9 @@ sealed class Info {
         override val url: String?,
         override val originalUrl: String?,
         override val service: String?,
+        override val categories: List<Category>,
+        override val related: List<Related>,
+
         val description: FormattedText?,
         val items : Items?,
         val uploader: Summary.ChannelSummary?,
@@ -123,6 +139,9 @@ sealed class Info {
         override val url: String?,
         override val originalUrl: String?,
         override val service: String?,
+        override val categories: List<Category>,
+        override val related: List<Related>,
+
         val parentChannel : Summary.ChannelSummary?,
         val avatars : List<Thumbnail> ,
         val verified: Boolean?,
@@ -176,13 +195,27 @@ enum class PlaylistType {
     SUPER
 }
 @Serializable
-data class Thumbnail(val url : String , val width : Int , val height : Int)
+data class Thumbnail(val url : String , val width : Int? , val height : Int?)
+
+@Serializable
+data class Related(val url : String, val relation : Relation)
+
+@Serializable
+enum class Relation {
+    TRAILER , CONTENT
+}
+
+@Serializable
+enum class Category {
+    PODCAST,MOVIE,SERIES,ANIME,INTERNET_CHANNEL,CABLE_CHANNEL,RADIO
+}
 
 @Serializable
 sealed interface FormattedText {
-    @Serializable @SerialName("html")     data class HTML(val content : String) : FormattedText
-    @Serializable @SerialName("markdown") data class Markdown(val content : String) : FormattedText
-    @Serializable @SerialName("plain")    data class Plain(val content: String) : FormattedText
+    abstract val content : String
+    @Serializable @SerialName("html")     data class HTML(override val content : String) : FormattedText
+    @Serializable @SerialName("markdown") data class Markdown(override val content : String) : FormattedText
+    @Serializable @SerialName("plain")    data class Plain(override val content: String) : FormattedText
 }
 
 /**

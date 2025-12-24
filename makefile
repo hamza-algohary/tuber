@@ -7,3 +7,5 @@ test:
 
 clean:
 	rm tuber.jar
+
+podcasts-index:

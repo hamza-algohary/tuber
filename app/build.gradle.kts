@@ -52,12 +52,22 @@ dependencies {
     implementation("org.apache.lucene:lucene-analysis-icu:10.3.2")
     implementation("org.apache.lucene:lucene-queryparser:10.3.2")
 
+    implementation("org.xerial:sqlite-jdbc:3.51.1.0")
+
 //    implementation("info.picocli:picocli:4.7.7")
 //    kapt("info.picocli:picocli-codegen:4.7.7")
 
     // DJL Stuff
     // https://mvnrepository.com/artifact/ai.djl/api
     implementation("ai.djl:api:0.35.1")
+    implementation(platform("ai.djl:bom:0.35.1"))
+    implementation("ai.djl.huggingface:tokenizers")
+    runtimeOnly("ai.djl.pytorch:pytorch-engine")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
+
+    implementation("org.jsoup:jsoup:1.17.2")
+    implementation("org.commonmark:commonmark:0.27.0")
+
 //    implementation(platform("ai.djl:bom:0.30.0"))
 //
 //    // Core DJL
@@ -112,4 +122,22 @@ tasks.named<Test>("test") {
         showCauses = true
         showStandardStreams = true  // shows println() output
     }
+}
+
+tasks.register<JavaExec>("preparePodcastIndex") {
+    group = "build setup"
+    description = "Converts PodcastIndex db into an Apache Luecne index as a resource."
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("tasks.PodcastIndex")
+}
+
+tasks.register<JavaExec>("podcastSearchRepl") {
+    group = null
+    description = null
+    standardInput = System.`in`
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("tasks.PodcastSearchRepl")
+
+    logging.captureStandardOutput(LogLevel.QUIET)
+    logging.captureStandardError(LogLevel.QUIET)
 }

@@ -49,7 +49,7 @@ val newpipeBackend = Backend(
         YouTubeCatalogProvider,
         SoundCloudCatalogProvider
     ),
-    init=::init
+    init=::init,
 )
 
 internal fun serviceFromName(name : String) =

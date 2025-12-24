@@ -13,12 +13,14 @@ import org.schabi.newpipe.extractor.search.SearchInfo
 import services.Backend
 import services.newpipe.*
 import services.newpipe.fromJson
+import transformSentence
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 import java.io.PrintStream
 import kotlin.test.Test
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 fun withStreams(
     out : PrintStream = System.out ,
@@ -49,7 +51,11 @@ class AppTest {
     @Test fun testCLIChannelYoutube() = testMain("channel","https://www.youtube.com/@TheLinuxEXP" , testName = "youtube_channel.json")
     @Test fun testCLIPlaylistYoutube() = testMain("playlist" , "https://www.youtube.com/playlist?list=PLqmbcbI8U55EQLnXs1ehDw5-D94vloCzb" , testName = "youtube_playlist.json")
 
-
+    @Test fun embeddingQuickSanityCheck() {
+        val v = transformSentence("Mars is the red planet")
+        println(v!!.size)           // should be 768
+        println(v.map{it*it}.sum()) // should be ~1.0
+    }
 
     @Test fun testSearchNextPageDeserialization() {
         NewPipe.init(OkHttpDownloader())
@@ -69,6 +75,50 @@ class AppTest {
         }
     }
 
+    private fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
+        require(a.size == b.size)
+
+        var dot = 0.0
+        var normA = 0.0
+        var normB = 0.0
+
+        for (i in a.indices) {
+            dot += a[i] * b[i]
+            normA += a[i] * a[i]
+            normB += b[i] * b[i]
+        }
+
+        return (dot / (Math.sqrt(normA) * Math.sqrt(normB))).toFloat()
+    }
+
+    @Test
+    fun `similar sentences are closer than unrelated ones`() {
+        val s1 = "The cat is sitting on the sofa"
+        val s2 = "A kitty is lying on a couch"
+        val s3 = "Quantum mechanics describes subatomic particles"
+
+        val e1 = transformSentence(s1)!!
+        val e2 = transformSentence(s2)!!
+        val e3 = transformSentence(s3)!!
+
+        val sim12 = cosineSimilarity(e1, e2)
+        val sim13 = cosineSimilarity(e1, e3)
+
+        println("Similarity(s1, s2) = ${cosineSimilarity(e1, e2)}")
+        println("Similarity(s1, s3) = ${cosineSimilarity(e1, e3)}")
+        println("Similarity(s2, s3) = ${cosineSimilarity(e2, e3)}")
+
+        assertTrue(
+            sim12 > sim13,
+            "Related sentences should be more similar than unrelated ones"
+        )
+
+        // Optional but useful threshold
+        assertTrue(
+            sim12 > 0.5f,
+            "Expected reasonably high similarity for paraphrases"
+        )
+    }
     /*@Test fun testCLI() {
         testCLISearchYoutube()
         testCLISearchSoundCloud()

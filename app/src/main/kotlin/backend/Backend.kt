@@ -3,16 +3,20 @@ package services
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.jsoup.Jsoup
 
 class Backend(
     val infoProviders : List<InfoProvider> ,
     val moreItemsProvider: List<MoreItemsProvider> ,
     val searchProviders : List<SearchProvider> ,
     val catalogProviders: List<CatalogProvider> ,
+    val categories : List<String> = emptyList(),
     init : ()->Unit = {} ,
+    condition : ()->Boolean = {true} ,
 ) {
     init {
-        init()
+        if (condition())
+            init()
     }
 }
 
@@ -41,3 +45,41 @@ interface CatalogProvider {
     val name : String
     fun catalog() : List<Info.PlaylistInfo>
 }
+
+/**
+ * Turns dynamic fields (like views, subscribers, etc.)
+ * into null. Useful when caching/indexing, as you don't
+ * want your cache to contain outdated data.
+ */
+fun Summary.eraseDynamicFields() =
+    when (this) {
+        is Summary.ChannelSummary -> copy(subscriberCount = null , streamCount = null)
+        is Summary.PlaylistSummary -> copy(streamCount = null)
+        is Summary.StreamSummary -> copy(views = null)
+    }
+
+
+fun FormattedText?.toPlainText() =
+    when(this) {
+        is FormattedText.HTML -> Jsoup.parse(content).text()
+        is FormattedText.Markdown ->
+            org.commonmark.parser.Parser.Builder().build().parse(content).let {
+                org.commonmark.renderer.text.TextContentRenderer.builder().build().render(it)
+            }
+        is FormattedText.Plain -> content
+        null -> ""
+    }
+
+val Summary.type : String get() =
+    when(this) {
+        is Summary.ChannelSummary -> "channel"
+        is Summary.PlaylistSummary -> "playlist"
+        is Summary.StreamSummary -> "stream"
+    }
+
+val emptyChannelSummary : Summary.ChannelSummary =
+    Summary.ChannelSummary(null,null,emptyList(),null,emptyList(),emptyList(),null,null,null,null)
+val emptyPlaylistSummary : Summary.PlaylistSummary =
+    Summary.PlaylistSummary(null,null,emptyList(),null,emptyList(),emptyList(),null,null,null,null)
+val emptyStreamSummary : Summary.StreamSummary =
+    Summary.StreamSummary(null,null,emptyList(),null,emptyList(),emptyList(),null,null,null,null,null,null)
