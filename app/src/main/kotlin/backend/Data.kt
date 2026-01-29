@@ -48,7 +48,7 @@ sealed class Summary {
         override val categories: List<Category>,
         override val related: List<Related>,
         val uploader: ChannelSummary?,
-        val streamCount: Long?,
+        val numberOfItems: Long?,
         override val description : FormattedText?,
         val playlistType : PlaylistType?
     ) : Summary()
@@ -126,12 +126,13 @@ sealed class Info {
         override val related: List<Related>,
 
         val description: FormattedText?,
-        val items : Items?,
+        val items: Items?,
         val uploader: Summary.ChannelSummary?,
         val subUploader: Summary.ChannelSummary?,
         val thumbnails: List<Thumbnail>,
-        val banners : List<Thumbnail>,
-        val playlistType: PlaylistType?
+        val banners: List<Thumbnail>,
+        val playlistType: PlaylistType?,
+        val numberOfItems: Long?,
     ) : Info()
     @Serializable data class ChannelInfo(
         override val id: String?,
@@ -218,6 +219,12 @@ sealed interface FormattedText {
     @Serializable @SerialName("plain")    data class Plain(override val content: String) : FormattedText
 }
 
+val FormattedText.typePresenetableName get() =
+    when(this) {
+        is FormattedText.HTML -> "HTML"
+        is FormattedText.Markdown -> "Markdown"
+        is FormattedText.Plain -> "Plain Text"
+    }
 /**
  * Data about a chapter in a YouTube video or anything like it.
  */
@@ -245,6 +252,9 @@ data class PreviewFrames(
     val framesPerPageY : Int
 )
 
+@Serializable data class Progress(val progress : Long , val total : Long)
+
 class UnidentifiableService(message : String) : Exception("Unidentifiable Service: $message ")
 class UnknownServiceName(val name : String) : Exception("Unknown service name: $name")
 class PageIsNull : Exception("Page is null")
+class InvalidPageToken : Exception("Invalid page token")

@@ -182,7 +182,8 @@ fun NewPipePlaylistInfo.toPlaylistInfo() : Info.PlaylistInfo =
             null,
             null
         ),
-        thumbnails?.map(Image::toThumbnail)?:emptyList(), banners?.map(Image::toThumbnail)?:emptyList(), playlistType.toPlaylistType()
+        thumbnails?.map(Image::toThumbnail)?:emptyList(), banners?.map(Image::toThumbnail)?:emptyList(), playlistType.toPlaylistType(),
+        streamCount
     )
 fun NewPipeChannelInfo.toChannelInfo() : Info.ChannelInfo =
     Info.ChannelInfo(
@@ -224,7 +225,7 @@ fun NewPipeChannelInfo.toChannelInfo() : Info.ChannelInfo =
 
 fun ChannelTabInfo.toPlaylistInfo() : Info.PlaylistInfo =
     Info.PlaylistInfo(
-        id=id, name=name, url=url, originalUrl = originalUrl,
+        id =id, name =name, url =url, originalUrl = originalUrl,
         service = service.name ,
         emptyList(),
         emptyList(),
@@ -233,12 +234,12 @@ fun ChannelTabInfo.toPlaylistInfo() : Info.PlaylistInfo =
             relatedItems.toSummaries() ,
             NextPage.TabNextPage(service.name ,nextPage , originalUrl , url, id, contentFilters, sortFilter).toJson() ,
         ) ,
-        null , null , emptyList() , emptyList() ,null
+        null , null , emptyList() , emptyList() ,null , null
     )
 
 fun KioskInfo.toPlaylistInfo() : Info.PlaylistInfo =
     Info.PlaylistInfo(
-        id=id , name=name , url = url , originalUrl=originalUrl ,
+        id =id , name =name , url = url , originalUrl =originalUrl ,
         service = service.name ,
         emptyList(),
         emptyList(),
@@ -247,7 +248,7 @@ fun KioskInfo.toPlaylistInfo() : Info.PlaylistInfo =
             relatedItems.toSummaries() ,
             nextPageToken = NextPage.KioskNextPage(service.name , url , nextPage).toJson()
         ),
-        uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = null
+        uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = null, null
     )
 
 fun SearchResult.toPlaylistInfo(name : String , service : StreamingService , playlistType: PlaylistType = PlaylistType.SUPER) : Info.PlaylistInfo =
@@ -257,7 +258,7 @@ fun SearchResult.toPlaylistInfo(name : String , service : StreamingService , pla
         emptyList(),
         emptyList(),
         null ,
-        items , uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = playlistType
+        items , uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = playlistType , null
     )
 
 // ================= Helper Classes ======================
@@ -324,4 +325,3 @@ fun NewPipePlaylistType.toPlaylistType() : PlaylistType =
         NewPipePlaylistType.MIX_CHANNEL -> PlaylistType.MIX_VIDEO
         NewPipePlaylistType.MIX_GENRE -> PlaylistType.MIX_MUSIC_GENRE
     }
-

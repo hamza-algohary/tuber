@@ -3,23 +3,25 @@
  */
 package org.example
 
-import OkHttpDownloader
+import capabilities.OkHttpDownloader
 import attemptUntilOneSucceeds
 import backend
+import backend.Lists
+import backend.PodcastIndex
+import backend.toSummary
+import kotlinx.serialization.json.Json
 import main
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.search.SearchInfo
+import podcastindex
 import services.Backend
 import services.newpipe.*
-import services.newpipe.fromJson
 import transformSentence
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.io.OutputStream
 import java.io.PrintStream
 import kotlin.test.Test
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 fun withStreams(
@@ -42,6 +44,7 @@ fun testMain(vararg args : String , testName : String) {
 }
 
 class AppTest {
+
     @Test fun testCLISearchYoutube() = testMain("search","youtube","linux" , testName = "youtube_search.json")
     @Test fun testCLISearchSoundCloud() = testMain("search","soundcloud","linux", testName = "soundcloud_search.json")
     @Test fun testCLISearchPeerTube() = testMain("search","peertube","linux", testName = "peertube_search.json")
@@ -59,7 +62,7 @@ class AppTest {
 
     @Test fun testSearchNextPageDeserialization() {
         NewPipe.init(OkHttpDownloader())
-        fromJson<NextPage>(
+        NextPage.fromJson(
             NextPage.SearchNextPage(
                 "youtube",
                 "linux",
@@ -71,7 +74,7 @@ class AppTest {
                 ).nextPage
             ).toJson()
         ).items.items.take(3).let {
-            println(json.encodeToString(it))
+            println(Json.encodeToString(it))
         }
     }
 
@@ -159,5 +162,13 @@ class AppTest {
 
     @Test fun testBackendSearch() = backend.testSearch()
 
+    @Test fun testPodcastIndexBasicSearch() {
+        podcastindex.lists.search(podcastindex.name,"christ").let { results ->
+            results.items.forEach { item ->
+                println("${item.name}")
+            }
+            println("Next Page: ${results.nextPageToken}")
+        }
+    }
 }
 

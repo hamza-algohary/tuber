@@ -1,3 +1,5 @@
+package capabilities
+
 import okhttp3.*
 import org.schabi.newpipe.extractor.downloader.Downloader
 import org.schabi.newpipe.extractor.downloader.Request

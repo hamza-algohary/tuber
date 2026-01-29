@@ -35,7 +35,8 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.guava)
 
-    implementation("com.github.TeamNewPipe:NewPipeExtractor:v0.24.8")
+//    implementation("com.github.TeamNewPipe:NewPipeExtractor:v0.24.8")
+    implementation("com.github.TeamNewPipe:NewPipeExtractor:v0.25.1")
 
     // https://mvnrepository.com/artifact/org.danilopianini/khttp
     implementation("com.squareup.okhttp3:okhttp:5.2.1")
@@ -85,6 +86,7 @@ dependencies {
 //    // Tokenizers (SentencePiece, BPE, etc.)
 //    implementation("ai.djl.huggingface:huggingface-tokenizers")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -97,7 +99,32 @@ java {
 application {
     // Define the main class for the application.
     mainClass = "AppKt"
+//    applicationDefaultJvmArgs += listOf("--add-modules", "jdk.incubator.vector")
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+//        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+//        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+        javaParameters = true
+        freeCompilerArgs.addAll("-Xjvm-default=all", "-Xadd-modules=java.base,jdk.incubator.vector")
+    }
+}
+
+tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlin") {
+    compilerOptions {
+//        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+//        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+        javaParameters = true
+        freeCompilerArgs.addAll("-Xjvm-default=all", "-Xadd-modules=java.base,jdk.incubator.vector")
+    }
+}
+
+//kotlin {
+//    compilerOptions {
+//        freeCompilerArgs.addAll(listOf("-Xadd-modules=jdk.incubator.vector"))
+//    }
+//}
 
 distributions {
     main {

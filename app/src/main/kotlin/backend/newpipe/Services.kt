@@ -1,17 +1,12 @@
 package services.newpipe
 
-import OkHttpDownloader
+import capabilities.OkHttpDownloader
 import services.*
 import services.Info
 import org.schabi.newpipe.extractor.search.SearchInfo
 import org.schabi.newpipe.extractor.*
 import org.schabi.newpipe.extractor.channel.ChannelInfo
-import org.schabi.newpipe.extractor.kiosk.KioskExtractor
 import org.schabi.newpipe.extractor.kiosk.KioskInfo
-import org.schabi.newpipe.extractor.kiosk.KioskList
-import org.schabi.newpipe.extractor.linkhandler.LinkHandlerFactory
-import org.schabi.newpipe.extractor.linkhandler.ListLinkHandler
-import org.schabi.newpipe.extractor.linkhandler.ListLinkHandlerFactory
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo
 import org.schabi.newpipe.extractor.stream.*
 
@@ -30,7 +25,7 @@ fun init() {
 }
 
 val newpipeBackend = Backend(
-    searchProviders =  listOf(YouTube , PeerTube , SoundCloud , BandCamp , MediaCCC) ,
+    searchProviders =  listOf(YouTube , PeerTube , SoundCloud , BandCamp /*, MediaCCC*/) ,
     infoProviders = listOf(
         object : InfoProvider {
             override val name = "newpipe"
@@ -42,7 +37,7 @@ val newpipeBackend = Backend(
     moreItemsProvider = listOf(
         object : MoreItemsProvider {
             override val name = "newpipe"
-            override fun moreItems(pageToken: String) = fromJson<NextPage>(pageToken).items
+            override fun moreItems(pageToken: String) = NextPage.fromJson(pageToken).items //fromJson<NextPage>(pageToken).items
         }
     ),
     catalogProviders = listOf(

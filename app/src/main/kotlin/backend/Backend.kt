@@ -1,8 +1,5 @@
 package services
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import org.jsoup.Jsoup
 
 class Backend(
@@ -54,7 +51,7 @@ interface CatalogProvider {
 fun Summary.eraseDynamicFields() =
     when (this) {
         is Summary.ChannelSummary -> copy(subscriberCount = null , streamCount = null)
-        is Summary.PlaylistSummary -> copy(streamCount = null)
+        is Summary.PlaylistSummary -> copy(numberOfItems = null)
         is Summary.StreamSummary -> copy(views = null)
     }
 
@@ -71,7 +68,7 @@ fun FormattedText?.toPlainText() =
     }
 
 val Summary.type : String get() =
-    when(this) {
+    when (this) {
         is Summary.ChannelSummary -> "channel"
         is Summary.PlaylistSummary -> "playlist"
         is Summary.StreamSummary -> "stream"
@@ -83,3 +80,37 @@ val emptyPlaylistSummary : Summary.PlaylistSummary =
     Summary.PlaylistSummary(null,null,emptyList(),null,emptyList(),emptyList(),null,null,null,null)
 val emptyStreamSummary : Summary.StreamSummary =
     Summary.StreamSummary(null,null,emptyList(),null,emptyList(),emptyList(),null,null,null,null,null,null)
+
+fun Info.StreamInfo.toStreamSummary() =
+    Summary.StreamSummary(
+        name,url,thumbnails,service,categories,related,type,
+        duration,viewCount,uploadTimeStamp,description,uploader
+    )
+
+fun Info.PlaylistInfo.toPlaylistSummary() =
+    Summary.PlaylistSummary (
+        name,url,thumbnails,service,categories,related,uploader,numberOfItems,description,playlistType
+    )
+
+fun Info.ChannelInfo.toChannelSummary() =
+    Summary.ChannelSummary (
+        name,url, avatars,service,categories,related,verified,description,subscriberCount, streamCount
+    )
+
+fun Info.toSummary() : Summary =
+    when (this) {
+        is Info.StreamInfo -> toStreamSummary()
+        is Info.PlaylistInfo -> toPlaylistSummary()
+        is Info.ChannelInfo -> toChannelSummary()
+    }
+
+fun Info.PlaylistInfo.iter(moreItemsProvider: MoreItemsProvider) =
+    sequence {
+        var page: Items? = this@iter.items
+        while (page != null) {
+            yieldAll(page.items)
+            page = page.nextPageToken?.let(moreItemsProvider::moreItems)
+        }
+    }
+
+

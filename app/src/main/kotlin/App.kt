@@ -1,19 +1,27 @@
 
+import backend.Lists
+import backend.PodcastIndex
+import backend.createIndex
+import backend.toBackend
 import kotlinx.serialization.json.Json
 import services.*
 import services.newpipe.newpipeBackend
 import java.lang.Exception
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.multiple
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.split
-import old.backend
+import kotlinx.serialization.decodeFromString
+import java.io.File
+import java.util.Scanner
+//import old.backend
 import kotlin.system.exitProcess
+
+fun <T> Try(func : ()->T) : T? =
+    try { func() } catch (e : Exception) { null }
 
 operator fun Backend.plus(other : Backend) =
     Backend(
@@ -39,7 +47,15 @@ fun <T , O> List<T>.attemptUntilOneSucceeds(func : T.()->O) : O? {
     return null
 }
 
-val backend = newpipeBackend
+val podcastindex = PodcastIndex(Config.PODCASTINDEX_INDEX_PATH)
+val backend = newpipeBackend + podcastindex.toBackend()
+
+fun InfoProvider.infoFromUrl(url : String) : Info? =
+    Try { stream(url) } ?: Try { playlist(url) } ?: Try { channel(url) }
+fun Backend.infoFromUrl(url : String) =
+    infoProviders.attemptUntilOneSucceeds { infoFromUrl(url) }
+
+
 
 object CLIServer : CliktCommand() {
     override fun run() = Unit
@@ -146,6 +162,119 @@ class Catalog : CliktCommand(name = "catalog") {
     }
 }
 
+const val NULL_CHAR = Char.MIN_VALUE
+class PreparePodcastindex : CliktCommand(name = "prepare-podcastindex") {
+    private val databasePath : String by argument("podcastindex-sqlitedb-path")
+    override fun run() {
+        podcastindex.createIndex(
+            databasePath ,
+            report = { progress,total ->
+                Progress(progress,total).toJson().plus(NULL_CHAR).println()
+            }
+        )
+    }
+}
+
+val mediaLists = Lists(Config.MEDIA_LISTS_PATH)
+class ListsCommand : CliktCommand(name = "lists") {
+    override fun run() =
+        mediaLists.lists().toJson().println()
+}
+
+class ListSearch : CliktCommand(name = "list-search") {
+    val listName by argument("list-name")
+    val query by argument("query")
+    override fun run() {
+        mediaLists.search(listName,query).toJson().println()
+    }
+}
+
+
+class ListAdd : CliktCommand("list-add") {
+    val listName : String by argument("list-name")
+    val url : String by argument("url")
+    override fun run(): Unit {
+        backend.infoFromUrl(url)?.let { info ->
+            mediaLists.addToList(info.toSummary() , listName)
+            if (info is Info.PlaylistInfo) {
+                backend.moreItemsProvider.attemptUntilOneSucceeds {
+                    info.iter(this).forEach {
+                        mediaLists.addToList(it,listName)
+                    }
+                }
+            }
+        } ?: throw UnableToHandleLinkException(url)
+    }
+}
+
+class ListRemove : CliktCommand("list-remove") {
+    val listName : String by argument("list-name")
+    val url : String by argument("url")
+    override fun run(): Unit {
+        backend.infoFromUrl(url)?.let { info ->
+            info.url?.let { url ->
+                mediaLists.removeFromList(url , listName)
+            }
+            if (info is Info.PlaylistInfo) {
+                backend.moreItemsProvider.attemptUntilOneSucceeds {
+                    info.iter(this).forEach {
+                        it.url?.let { url ->
+                            mediaLists.removeFromList(url,listName)
+                        }
+                    }
+                }
+            }
+        } ?: throw UnableToHandleLinkException(url)
+    }
+}
+
+class ListDelete : CliktCommand("list-delete") {
+    val listName by argument("list-name")
+    override fun run() {
+        mediaLists.deleteList(listName)
+    }
+
+}
+
+class ListExport : CliktCommand("list-export") {
+    val listName : String by argument("list-name")
+    val path : String by argument("path")
+    override fun run() {
+        java.io.File(path).writer().use { file ->
+            mediaLists.getAll(listName).forEach { item ->
+                file.write(item.toJson() + NULL_CHAR)
+            }
+        }
+    }
+}
+
+class ListImport : CliktCommand("list-import") {
+    val listName : String by argument("list-name")
+    val path : String by argument("path")
+    override fun run() {
+        Scanner(File(path)).use { scanner ->
+            scanner.useDelimiter(NULL_CHAR.toString())
+            while(scanner.hasNext())
+                mediaLists.addToList(Json.decodeFromString<Summary>(scanner.next()) , listName)
+        }
+    }
+}
+
+class ListChannels : CliktCommand("list-channels") {
+    val listName : String by argument("list-name")
+    override fun run() {
+        mediaLists.channels(listName).toJson().println()
+    }
+}
+
+class ListServices : CliktCommand("list-services") {
+    val listName : String by argument("list-name")
+    override fun run() {
+        mediaLists.services(listName).toJson().println()
+    }
+}
+
+
 class Help : CliktCommand(name = "help") {
     val repo = "https://github.com/hamza-algohary/tuber"
     val message = """
@@ -160,10 +289,23 @@ class Help : CliktCommand(name = "help") {
         playlist <url>                                  -> PlaylistInfo
         channel  <url>                                  -> ChannelInfo
     Page Tokens Handler
-        more     <pageToken>                            -> Items
+        more     <page token>                            -> Items
     Catalogs/Recommendations
         catalogs                                        -> List<String>
         catalog  <catalog provider>                     -> List<PlaylistInfo>
+    Lists
+        lists                              -> List<String> # available lists names
+        list-add    <list name> <url>      # Adds url of stream, playlist or channel to list. Adding a playlist also adds its entire content.
+        list-remove <list name> <url>      # Removes an item from list, removing a playlist removes all its content
+        list-search <list name> <query>    # Search inside a list
+        list-export <list name> <path>     # Export an entire list to a file (a text file of NULL delimited stream of Summary JSONs)
+        list-import <list name> <path>     # Import an entire list from a file
+        list-delete <list name>            # Deletes an entire list
+        list-services <list name>          # Get all services used in a list
+        list-channels <list name>          # Get all explicitly added channels to a list
+    Others
+        prepare-podcastindex <path to podcastindex sqlite db>  -> Progressive null-delimited stream of Progress objects each in Json format.
+    
     ============================================
     Example
         $ tuber search youtube "linux" --filters video:audio --sort date
@@ -186,7 +328,7 @@ class Help : CliktCommand(name = "help") {
 //    }
 //}
 
-fun main(args: Array<String>) =
+fun main(args: Array<String>) {
     CLIServer.subcommands(
         SearchProviders(),
         Search(),
@@ -199,7 +341,19 @@ fun main(args: Array<String>) =
         Catalog(),
         Catalogs(),
         Help(),
+        PreparePodcastindex(),
+        ListsCommand(),
+        ListAdd(),
+        ListRemove(),
+        ListSearch(),
+        ListChannels(),
+        ListServices(),
+        ListImport(),
+        ListExport(),
+        ListDelete(),
     ).main(args)
+    mediaLists.close()
+}
 
 private inline fun <reified T> T.toJson() = Json.encodeToString(this)
 private fun String.println() = println(this)
@@ -215,9 +369,9 @@ fun handleCLIExceptions(func : ()->Unit) =
         func()
     } catch(e : Exception) {
         when (e) {
-            is old.UnableToHandleLinkException -> error("Unable to handle link ${e.link}")
+            is UnableToHandleLinkException -> error("Unable to handle link ${e.link}")
             is UnknownServiceName -> error("Unknown service name ${e.name}")
-            is old.InvalidTokenException -> error("Invalid token")
+            is InvalidTokenException -> error("Invalid token")
             else -> if (DEBUG) {
                 throw e
             } else {
