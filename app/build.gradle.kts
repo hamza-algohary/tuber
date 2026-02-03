@@ -60,10 +60,15 @@ dependencies {
 
     // DJL Stuff
     // https://mvnrepository.com/artifact/ai.djl/api
-    implementation("ai.djl:api:0.35.1")
-    implementation(platform("ai.djl:bom:0.35.1"))
-    implementation("ai.djl.huggingface:tokenizers")
-    runtimeOnly("ai.djl.pytorch:pytorch-engine")
+    val djlVersion = "0.35.1"
+    implementation("ai.djl:api:$djlVersion")
+    implementation(platform("ai.djl:bom:$djlVersion"))
+    implementation("ai.djl.huggingface:tokenizers:$djlVersion")
+    runtimeOnly("ai.djl.pytorch:pytorch-engine:$djlVersion")
+    runtimeOnly("ai.djl.pytorch:pytorch-model-zoo:$djlVersion")
+//    implementation("ai.djl.pytorch:pytorch-native-auto:$djlVersion")
+    runtimeOnly("ai.djl.pytorch:pytorch-native-cpu:2.7.1")
+
     implementation("org.slf4j:slf4j-simple:2.0.17")
 
     implementation("org.jsoup:jsoup:1.17.2")
@@ -102,23 +107,27 @@ application {
 //    applicationDefaultJvmArgs += listOf("--add-modules", "jdk.incubator.vector")
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    compilerOptions {
-//        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
-//        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
-        javaParameters = true
-        freeCompilerArgs.addAll("-Xjvm-default=all", "-Xadd-modules=java.base,jdk.incubator.vector")
-    }
+tasks.shadowJar {
+    mergeServiceFiles()
 }
 
-tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlin") {
-    compilerOptions {
-//        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
-//        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
-        javaParameters = true
-        freeCompilerArgs.addAll("-Xjvm-default=all", "-Xadd-modules=java.base,jdk.incubator.vector")
-    }
-}
+//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+//    compilerOptions {
+////        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+////        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+//        javaParameters = true
+//        freeCompilerArgs.addAll("-Xjvm-default=all", "-Xadd-modules=java.base,jdk.incubator.vector")
+//    }
+//}
+//
+//tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlin") {
+//    compilerOptions {
+////        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0
+////        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+//        javaParameters = true
+//        freeCompilerArgs.addAll("-Xjvm-default=all", "-Xadd-modules=java.base,jdk.incubator.vector")
+//    }
+//}
 
 //kotlin {
 //    compilerOptions {
@@ -126,13 +135,13 @@ tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileTestKotlin"
 //    }
 //}
 
-distributions {
-    main {
-        contents {
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        }
-    }
-}
+//distributions {
+//    main {
+//        contents {
+//            duplicatesStrategy = DuplicatesStrategy.WARN
+//        }
+//    }
+//}
 
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
@@ -151,20 +160,20 @@ tasks.named<Test>("test") {
     }
 }
 
-tasks.register<JavaExec>("preparePodcastIndex") {
-    group = "build setup"
-    description = "Converts PodcastIndex db into an Apache Luecne index as a resource."
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("tasks.PodcastIndex")
-}
-
-tasks.register<JavaExec>("podcastSearchRepl") {
-    group = null
-    description = null
-    standardInput = System.`in`
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("tasks.PodcastSearchRepl")
-
-    logging.captureStandardOutput(LogLevel.QUIET)
-    logging.captureStandardError(LogLevel.QUIET)
-}
+//tasks.register<JavaExec>("preparePodcastIndex") {
+//    group = "build setup"
+//    description = "Converts PodcastIndex db into an Apache Luecne index as a resource."
+//    classpath = sourceSets["main"].runtimeClasspath
+//    mainClass.set("tasks.PodcastIndex")
+//}
+//
+//tasks.register<JavaExec>("podcastSearchRepl") {
+//    group = null
+//    description = null
+//    standardInput = System.`in`
+//    classpath = sourceSets["main"].runtimeClasspath
+//    mainClass.set("tasks.PodcastSearchRepl")
+//
+//    logging.captureStandardOutput(LogLevel.QUIET)
+//    logging.captureStandardError(LogLevel.QUIET)
+//}

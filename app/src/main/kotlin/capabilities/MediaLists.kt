@@ -75,22 +75,20 @@ class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorE
 
     private fun makeQuery(listName : String , query : String , useVectorEmbeddings: Boolean = this.useVectorEmbeddings): Query =
         combine(
-            must = listOf(
-                anyOf(
+            boostWith = listOf(
                     fuzzyPhraseQuery("name", query),
                     fuzzyPhraseQuery("description", query),
                     *if (useVectorEmbeddings)
                         arrayOf(
-                            transformSentence(query)?.let { vectorNearestNeighbourQuery("name-embedding",it , pageSize , TermQuery(Term("list", listName))) },
-                            transformSentence(query)?.let { vectorNearestNeighbourQuery("description-embedding",it , pageSize , TermQuery(Term("list", listName))) },
+                            transformSentence(query)?.let { vectorNearestNeighbourQuery("name-embedding",it , pageSize , /*TermQuery(Term("list", listName))*/) },
+                            transformSentence(query)?.let { vectorNearestNeighbourQuery("description-embedding",it , pageSize , /*TermQuery(Term("list", listName))*/) },
                         )
                     else emptyArray()
-                ),
             ),
+        )
 //            scorelessFilters = listName.takeIf { it.isNotEmpty() }.let { listOf(
 //                TermQuery(Term("list", listName))
 //            ) }
-        )
 
     /** Use empty [listName] to search in all lists */
     fun search(listName : String , query : String , useVectorEmbeddings: Boolean = this.useVectorEmbeddings) : Items =

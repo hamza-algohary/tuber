@@ -174,16 +174,16 @@ infix fun Query.weight(weight : Double) =
  * Combine multiple queries
  */
 fun combine(
-    must : List<Query> = emptyList(),
-    boostWith : List<Query> = emptyList(),
-    except : List<Query> = emptyList(),
-    scorelessFilters : List<Query> = emptyList()
+    must : List<Query?> = emptyList(),
+    boostWith : List<Query?> = emptyList(),
+    except : List<Query?> = emptyList(),
+    scorelessFilters : List<Query?> = emptyList()
 ) =
     BooleanQuery.Builder().add(
-        must.map { BooleanClause(it , BooleanClause.Occur.MUST) } +
-                boostWith.map { BooleanClause(it , BooleanClause.Occur.SHOULD) } +
-                except.map { BooleanClause(it , BooleanClause.Occur.MUST_NOT) } +
-                scorelessFilters.map { BooleanClause(it , BooleanClause.Occur.FILTER) }
+        must.mapNotNull { BooleanClause(it , BooleanClause.Occur.MUST) } +
+        boostWith.mapNotNull { BooleanClause(it , BooleanClause.Occur.SHOULD) } +
+        except.mapNotNull { BooleanClause(it , BooleanClause.Occur.MUST_NOT) } +
+        scorelessFilters.mapNotNull { BooleanClause(it , BooleanClause.Occur.FILTER) }
     ).build()
 
 /**
