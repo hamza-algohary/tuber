@@ -92,6 +92,8 @@ dependencies {
 //    implementation("ai.djl.huggingface:huggingface-tokenizers")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+
+    implementation("com.prof18.rssparser:rssparser:6.1.3")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

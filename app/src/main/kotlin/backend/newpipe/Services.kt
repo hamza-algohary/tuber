@@ -61,7 +61,7 @@ internal fun serviceFromId(id : Int) =
         throw UnidentifiableService("Service ID doesn't match any NewPipe registered service. THIS SHOULD NEVER HAPPEN")
 val InfoItem.service get() = serviceFromId(serviceId)
 
-val StreamingService.name get() : String =
+public val StreamingService.name get() : String =
     when(this) {
         ServiceList.YouTube -> "youtube"
         ServiceList.PeerTube -> "peertube"

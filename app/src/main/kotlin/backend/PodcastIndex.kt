@@ -16,6 +16,7 @@ import services.SearchProvider
 import services.SearchResult
 import services.Summary
 import services.Thumbnail
+import services.toPlainText
 import java.sql.ResultSet
 
 
@@ -69,7 +70,9 @@ fun String?.asThumbnailUrl() =
     this?.let { Thumbnail(url = this, width = null, height = null) }
 
 fun String?.asPlainText() =
-    this?.let(::Plain)
+    this?.let {
+        Plain(FormattedText.HTML(this).toPlainText())
+    }
 
 
 fun ResultSet.toSummary() : Summary =

@@ -4,11 +4,12 @@
 package org.example
 
 import capabilities.OkHttpDownloader
-import attemptUntilOneSucceeds
 import backend
 import backend.Lists
 import backend.PodcastIndex
+import backend.RssUrlHandler
 import backend.toSummary
+import capabilities.attemptUntilOneSucceeds
 import kotlinx.serialization.json.Json
 import main
 import org.schabi.newpipe.extractor.NewPipe
@@ -147,9 +148,9 @@ class AppTest {
                 it.search("linux").let { results ->
                     if(results.items.items.isEmpty()) warning("service ${it.name} search returned empty list")
                     else good("service ${it.name} search returned some results")
-                    backend.moreItemsProvider.attemptUntilOneSucceeds {
+                    backend.moreItemsProvider.attemptUntilOneSucceeds { provider ->
                         results.items.nextPageToken?.let { token ->
-                            moreItems(token)?.let{ good("Next page token is fine") }?:error("Next page token is not fine")
+                            provider.moreItems(token)?.let{ good("Next page token is fine") }?:error("Next page token is not fine")
                         } ?: warning("Next page for search of ${it.name} is null")
                     } ?: error("Unable to get to next page for service: ${it.name}")
                 }
@@ -168,6 +169,14 @@ class AppTest {
                 println("${item.name}")
             }
             println("Next Page: ${results.nextPageToken}")
+        }
+    }
+
+    @Test fun testRssUrlHandler() {
+        RssUrlHandler.infoProviders[0].playlist("https://www.spreaker.com/show/6003534/episodes/feed").let {
+            println("Name: ${it.name}")
+            println("Description: ${it.description?.content}")
+            println("Number of Episodes: ${it.items?.detailedItems?.size?:0} ")
         }
     }
 }

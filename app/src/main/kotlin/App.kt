@@ -1,6 +1,7 @@
 
 import backend.Lists
 import backend.PodcastIndex
+import backend.RssUrlHandler
 import backend.createIndex
 import backend.toBackend
 import capabilities.attemptUntilOneSucceeds
@@ -20,6 +21,8 @@ import java.io.File
 import java.util.Scanner
 import kotlin.system.exitProcess
 import capabilities.DEBUG
+import capabilities.globalJsonSerializer
+import kotlinx.coroutines.Dispatchers
 
 fun <T> Try(func : ()->T) : T? =
     try { func() } catch (e : Exception) { null }
@@ -35,7 +38,7 @@ operator fun Backend.plus(other : Backend) =
 
 
 val podcastindex = PodcastIndex(Config.PODCASTINDEX_INDEX_PATH)
-val backend = newpipeBackend + podcastindex.toBackend()
+val backend = newpipeBackend + podcastindex.toBackend() + RssUrlHandler
 
 fun InfoProvider.infoFromUrl(url : String) : Info? =
     Try { stream(url) } ?: Try { playlist(url) } ?: Try { channel(url) }
@@ -340,9 +343,10 @@ fun main(args: Array<String>) {
         ListDelete(),
     ).main(args)
     mediaLists.close()
+    exitProcess(0) // We have to do it because either I know nothing about coroutines, or they are just DISGUSTING (ps: it's the latter)
 }
 
-private inline fun <reified T> T.toJson() = Json.encodeToString(this)
+private inline fun <reified T> T.toJson() = globalJsonSerializer.encodeToString(this)
 private fun String.println() = println(this)
 private fun String.print() = print(this)
 

@@ -14,7 +14,7 @@ import java.time.ZoneOffset
 
 // =============== Search and Summaries =============
 fun NewPipeSearchInfo.toSearchResult() : SearchResult =
-    SearchResult(Items(relatedItems.toSummaries() , NextPage.SearchNextPage(service.name , searchString , contentFilters , sortFilter , nextPage).toJson()) , searchSuggestion , isCorrectedSearch)
+    SearchResult(Items(relatedItems.toSummaries() , emptyList() , NextPage.SearchNextPage(service.name , searchString , contentFilters , sortFilter , nextPage).toJson()) , searchSuggestion , isCorrectedSearch)
 
 fun InfoItem.toSummary() : Summary? =
     when {
@@ -154,6 +154,7 @@ fun NewPipePlaylistInfo.toPlaylistInfo() : Info.PlaylistInfo =
         description.toFormattedText(),
         Items(
             relatedItems.toSummaries() ,
+            emptyList(),
             NextPage.PlaylistNextPage(service.name, url, nextPage).toJson()
         ),
         Summary.ChannelSummary(
@@ -232,6 +233,7 @@ fun ChannelTabInfo.toPlaylistInfo() : Info.PlaylistInfo =
         null ,
         Items(
             relatedItems.toSummaries() ,
+            emptyList(),
             NextPage.TabNextPage(service.name ,nextPage , originalUrl , url, id, contentFilters, sortFilter).toJson() ,
         ) ,
         null , null , emptyList() , emptyList() ,null , null
@@ -246,6 +248,7 @@ fun KioskInfo.toPlaylistInfo() : Info.PlaylistInfo =
         null ,
         Items(
             relatedItems.toSummaries() ,
+            emptyList(),
             nextPageToken = NextPage.KioskNextPage(service.name , url , nextPage).toJson()
         ),
         uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = null, null

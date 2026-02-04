@@ -45,3 +45,7 @@
 
 ### Notes
 - MediaCCC is not working at all.
+
+
+### Notes to be added to README to ensure proper use
+1. Summary object may contain info not present in its corresponding info, so frontend is merge and both to get the full picture sometimes

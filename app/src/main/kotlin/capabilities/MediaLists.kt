@@ -169,5 +169,6 @@ fun Sequence<ScoredDocument>.toSummaries() = mapNotNull { it.document.toSummary(
 fun LuceneSearchResults.toItems() : Items =
     Items(
         items = items.toSummaries(),
+        emptyList(),
         nextPageToken = Json.encodeToString(nextPage) //nextPage?.toBinaryString()
     )

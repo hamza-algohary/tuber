@@ -24,6 +24,10 @@ import kotlin.reflect.KClass
  * 2. Json deserialization is by providing fromJson() method for Companion object of intended type.
  */
 
+val globalJsonSerializer = Json {
+    classDiscriminator = "TYPE"
+}
+
 interface JsonSerializable {
     fun toJson() : String
 }

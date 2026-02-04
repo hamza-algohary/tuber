@@ -37,13 +37,13 @@ import org.schabi.newpipe.extractor.playlist.PlaylistInfo
 }
 
 fun <T : InfoItem> InfoItemsPage<T>.toSearchResultsItems(service: String , query : String , contentFilters: List<String> , sortFilter: String) =
-    Items(items.toSummaries() , NextPage.SearchNextPage(service , query , contentFilters , sortFilter , nextPage).toJson())
+    Items(items.toSummaries() , emptyList(), NextPage.SearchNextPage(service , query , contentFilters , sortFilter , nextPage).toJson())
 fun <T : InfoItem> InfoItemsPage<T>.toPlaylistItems(service : String , url : String) =
-    Items(items.toSummaries() , NextPage.PlaylistNextPage(service , url , nextPage).toJson())
+    Items(items.toSummaries() , emptyList(),NextPage.PlaylistNextPage(service , url , nextPage).toJson())
 fun <T : InfoItem> InfoItemsPage<T>.toTabItems(service : String , originalUrl : String , url : String , id : String , contentFilters : List<String> , sortFilter : String) =
-    Items(items.toSummaries() , NextPage.TabNextPage(service , nextPage , originalUrl , url , id , contentFilters , sortFilter).toJson())
+    Items(items.toSummaries() , emptyList(),NextPage.TabNextPage(service , nextPage , originalUrl , url , id , contentFilters , sortFilter).toJson())
 fun <T : InfoItem> InfoItemsPage<T>.toKioskItems(service: String , url : String) =
-    Items(items.toSummaries() , NextPage.KioskNextPage(service , url , nextPage).toJson())
+    Items(items.toSummaries() , emptyList(),NextPage.KioskNextPage(service , url , nextPage).toJson())
 val NextPage.items : Items get() =
     page?.let { page ->
         serviceFromName(service)?.let { service ->

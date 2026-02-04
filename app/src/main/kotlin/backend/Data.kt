@@ -15,6 +15,7 @@ data class SearchResult (
 @Serializable
 data class Items (
     val items : List<Summary>,
+    val detailedItems : List<Info>,
     val nextPageToken : String?,
 )
 
@@ -78,6 +79,7 @@ sealed class Info {
     abstract val service : String?
     abstract val categories : List<Category>
     abstract val related : List<Related>
+    @SerialName("stream")
     @Serializable data class StreamInfo(
         override val id : String?,
         override val name : String?,
@@ -116,6 +118,7 @@ sealed class Info {
         val videoOnlyStreams : List<Stream.Video> ,
         val subtitles : List<Stream.Subtitles>
     ) : Info()
+    @SerialName("playlist")
     @Serializable data class PlaylistInfo(
         override val id: String?,
         override val name: String?,
@@ -134,6 +137,7 @@ sealed class Info {
         val playlistType: PlaylistType?,
         val numberOfItems: Long?,
     ) : Info()
+    @SerialName("channel")
     @Serializable data class ChannelInfo(
         override val id: String?,
         override val name: String?,
