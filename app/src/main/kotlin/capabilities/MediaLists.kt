@@ -11,6 +11,7 @@ import org.apache.lucene.document.StringField
 import org.apache.lucene.document.TextField
 import org.apache.lucene.index.Term
 import org.apache.lucene.index.VectorSimilarityFunction
+import org.apache.lucene.search.FuzzyQuery
 import org.apache.lucene.search.Query
 import org.apache.lucene.search.TermQuery
 import org.apache.lucene.util.BytesRef
@@ -23,6 +24,11 @@ import services.type
 import transformSentence
 import java.io.File
 
+
+fun fuzzyPhraseQueries(fieldName : String , fieldValue : String) =
+    fieldValue.trim().split(" ").map { value ->
+        FuzzyQuery(Term(fieldName,value))
+    }.toTypedArray()
 
 /** Tokenized text. Use it for fuzzy matching and stuff.*/
 fun text(name : String , value : String? , store : Store = Store.NO) = TextField(name,value,store)
@@ -57,27 +63,34 @@ fun Document.toSummary() : Summary? =
     get("json")?.let(Json::decodeFromString)
 
 
-
 class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorEmbeddings: Boolean=true) : AutoCloseable {
-
-    //val index = DocumentsIndex(indexDirectory , uniqueFieldName = "url" , pageSize = pageSize)
-    val indexes = HashMap<String,DocumentsIndex>()
-    fun indexPath(listName : String) = "$indexDirectory/$listName"
-    fun index(listName : String) =
+    private val indexes = HashMap<String,DocumentsIndex>()
+    private fun indexPath(listName : String) = "$indexDirectory/$listName"
+    private fun index(listName : String) =
         indexes.getOrPut(listName) {
             DocumentsIndex(indexPath(listName) , pageSize = pageSize , uniqueFieldName = "url")
         }
 
-    fun addToList(summary : Summary, listName : String) =
-        index(listName).add(summary.toDocument(/* *filter("list",listName) */useVectorEmbeddings = useVectorEmbeddings))
-    fun removeFromList(url : String , listName : String) =
-        index(listName).remove(url)
+    interface Commit {
+        fun addToList(summary: Summary) : Any
+        fun removeFromList(url : String) : Any
+    }
+
+    fun <T> commit(listName : String , operations : Commit.()->T ) =
+        index(listName).commit {
+            object : Commit {
+                override fun addToList(summary : Summary) =
+                    add(summary.toDocument(useVectorEmbeddings = useVectorEmbeddings))
+                override fun removeFromList(url : String) =
+                    remove(url)
+            }.operations()
+        }
 
     private fun makeQuery(listName : String , query : String , useVectorEmbeddings: Boolean = this.useVectorEmbeddings): Query =
-        combine(
+        combineQueries(
             boostWith = listOf(
-                    fuzzyPhraseQuery("name", query),
-                    fuzzyPhraseQuery("description", query),
+                    *fuzzyPhraseQueries("name", query),
+                    *fuzzyPhraseQueries("description", query),
                     *if (useVectorEmbeddings)
                         arrayOf(
                             transformSentence(query)?.let { vectorNearestNeighbourQuery("name-embedding",it , pageSize , /*TermQuery(Term("list", listName))*/) },
@@ -86,9 +99,6 @@ class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorE
                     else emptyArray()
             ),
         )
-//            scorelessFilters = listName.takeIf { it.isNotEmpty() }.let { listOf(
-//                TermQuery(Term("list", listName))
-//            ) }
 
     /** Use empty [listName] to search in all lists */
     fun search(listName : String , query : String , useVectorEmbeddings: Boolean = this.useVectorEmbeddings) : Items =
@@ -101,28 +111,21 @@ class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorE
             )
         }.toItems()
 
-    fun lists() = subdirs(indexDirectory)//index.getAllValuesOf("list")
+    fun lists() = subdirs(indexDirectory)
     fun services(listName : String) = index(listName).getAllValuesOf("service")
     fun channels(listName : String) =
-        index(listName).query(
+        index(listName).search(
             TermQuery(Term("type", emptyChannelSummary.type)) ,
             pageSize = Int.MAX_VALUE
-        ).toSummaries()
+        ).items.toSummaries()
 
-    fun commit(listName: String) = index(listName).writer.commit()
-    override fun close() {
-//        commit()
-//        index.writer.close()
-        indexes.forEach { (listName , index) ->
-            commit(listName)
-            index.writer.close()
-        }
-    }
-    fun <T> commit(listName: String , func : (Lists)->T) : T =
-        func(this).also {
-            commit(listName)
-        }
-    fun overwrite(listName : String , func : (Lists)->Unit) {
+    fun commit(listName: String) = index(listName).commit()
+//
+//    fun <T> commit(listName: String , func : (Lists)->T) : T =
+//        func(this).also {
+//            commit(listName)
+//        }
+    fun overwrite(listName : String , func : (Commit)->Unit) {
         commit (listName) {
             File(indexDirectory).deleteRecursively()
             func(this)
@@ -140,6 +143,13 @@ class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorE
         }
     fun getAll(listName: String) = index(listName).getAll().toSummaries()
     fun deleteList(listName: String) = deleteDir(indexPath(listName))
+
+    override fun close() {
+        indexes.forEach { (listName , index) ->
+            commit(listName)
+            index.close()
+        }
+    }
 }
 
 private fun subdirs(path: String): List<String> =
@@ -152,3 +162,12 @@ private fun subdirs(path: String): List<String> =
 
 private fun deleteDir(path: String) =
     runCatching { java.io.File(path).deleteRecursively() }.getOrDefault(false)
+
+fun List<ScoredDocument>.toSummaries() = mapNotNull { it.document.toSummary() }
+fun Sequence<ScoredDocument>.toSummaries() = mapNotNull { it.document.toSummary() }
+
+fun LuceneSearchResults.toItems() : Items =
+    Items(
+        items = items.toSummaries(),
+        nextPageToken = Json.encodeToString(nextPage) //nextPage?.toBinaryString()
+    )

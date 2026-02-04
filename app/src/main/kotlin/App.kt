@@ -3,6 +3,7 @@ import backend.Lists
 import backend.PodcastIndex
 import backend.createIndex
 import backend.toBackend
+import capabilities.attemptUntilOneSucceeds
 import kotlinx.serialization.json.Json
 import services.*
 import services.newpipe.newpipeBackend
@@ -17,8 +18,8 @@ import com.github.ajalt.clikt.parameters.options.split
 import kotlinx.serialization.decodeFromString
 import java.io.File
 import java.util.Scanner
-//import old.backend
 import kotlin.system.exitProcess
+import capabilities.DEBUG
 
 fun <T> Try(func : ()->T) : T? =
     try { func() } catch (e : Exception) { null }
@@ -31,21 +32,7 @@ operator fun Backend.plus(other : Backend) =
         catalogProviders + other.catalogProviders
     )
 
-val DEBUG = System.getenv("DEBUG")=="true"
-fun <T , O> List<T>.attemptUntilOneSucceeds(func : T.()->O) : O? {
-    forEach {
-        runCatching {
-            return try {
-                it.func()
-            } catch (e : Exception) {
-                if(DEBUG)
-                    println(e.stackTraceToString())
-                throw e
-            }
-        }
-    }
-    return null
-}
+
 
 val podcastindex = PodcastIndex(Config.PODCASTINDEX_INDEX_PATH)
 val backend = newpipeBackend + podcastindex.toBackend()
@@ -53,7 +40,7 @@ val backend = newpipeBackend + podcastindex.toBackend()
 fun InfoProvider.infoFromUrl(url : String) : Info? =
     Try { stream(url) } ?: Try { playlist(url) } ?: Try { channel(url) }
 fun Backend.infoFromUrl(url : String) =
-    infoProviders.attemptUntilOneSucceeds { infoFromUrl(url) }
+    infoProviders.attemptUntilOneSucceeds { provider -> provider.infoFromUrl(url) }
 
 
 
@@ -98,8 +85,8 @@ class More : CliktCommand(name = "more") {
     private val token by argument("pageToken")
 
     override fun run() {
-        backend.moreItemsProvider.attemptUntilOneSucceeds {
-            moreItems(token).toJson().println()
+        backend.moreItemsProvider.attemptUntilOneSucceeds { provider ->
+            provider.moreItems(token).toJson().println()
         } ?: throw InvalidTokenException()
     }
 }
@@ -108,8 +95,8 @@ class Stream : CliktCommand(name = "stream") {
     private val url by argument("url")
 
     override fun run() {
-        backend.infoProviders.attemptUntilOneSucceeds {
-            stream(url).toJson().println()
+        backend.infoProviders.attemptUntilOneSucceeds {provider ->
+            provider.stream(url).toJson().println()
         } ?: throw UnableToHandleLinkException(url)
     }
 }
@@ -118,8 +105,8 @@ class Playlist : CliktCommand(name = "playlist") {
     private val url by argument("url")
 
     override fun run() {
-        backend.infoProviders.attemptUntilOneSucceeds {
-            playlist(url).toJson().println()
+        backend.infoProviders.attemptUntilOneSucceeds { provider ->
+            provider.playlist(url).toJson().println()
         } ?: throw UnableToHandleLinkException(url)
     }
 }
@@ -128,8 +115,8 @@ class Channel : CliktCommand(name = "channel") {
     private val url by argument("url")
 
     override fun run() {
-        backend.infoProviders.attemptUntilOneSucceeds {
-            channel(url).toJson().println()
+        backend.infoProviders.attemptUntilOneSucceeds { provider ->
+            provider.channel(url).toJson().println()
         } ?: throw UnableToHandleLinkException(url)
     }
 }
@@ -195,11 +182,11 @@ class ListAdd : CliktCommand("list-add") {
     val url : String by argument("url")
     override fun run(): Unit {
         backend.infoFromUrl(url)?.let { info ->
-            mediaLists.addToList(info.toSummary() , listName)
-            if (info is Info.PlaylistInfo) {
-                backend.moreItemsProvider.attemptUntilOneSucceeds {
-                    info.iter(this).forEach {
-                        mediaLists.addToList(it,listName)
+            mediaLists.commit(listName) {
+                addToList(info.toSummary())
+                if (info is Info.PlaylistInfo) {
+                    info.iter(backend.moreItemsProvider).forEach {
+                        addToList(it)
                     }
                 }
             }
@@ -213,13 +200,11 @@ class ListRemove : CliktCommand("list-remove") {
     override fun run(): Unit {
         backend.infoFromUrl(url)?.let { info ->
             info.url?.let { url ->
-                mediaLists.removeFromList(url , listName)
-            }
-            if (info is Info.PlaylistInfo) {
-                backend.moreItemsProvider.attemptUntilOneSucceeds {
-                    info.iter(this).forEach {
-                        it.url?.let { url ->
-                            mediaLists.removeFromList(url,listName)
+                mediaLists.commit(listName) {
+                    removeFromList(url)
+                    if (info is Info.PlaylistInfo) {
+                        info.iter(backend.moreItemsProvider).mapNotNull { it.url }.forEach {
+                            removeFromList(it)
                         }
                     }
                 }
@@ -255,7 +240,9 @@ class ListImport : CliktCommand("list-import") {
         Scanner(File(path)).use { scanner ->
             scanner.useDelimiter(NULL_CHAR.toString())
             while(scanner.hasNext())
-                mediaLists.addToList(Json.decodeFromString<Summary>(scanner.next()) , listName)
+                mediaLists.commit(listName) {
+                    addToList(Json.decodeFromString<Summary>(scanner.next()))
+                }
         }
     }
 }

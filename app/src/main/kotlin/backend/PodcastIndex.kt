@@ -18,9 +18,7 @@ import services.Summary
 import services.Thumbnail
 import java.sql.ResultSet
 
-//val podcastIndexBackend = Backend(
-//
-//)
+
 const val backendName = "podcastindex"
 
 class PodcastIndex(val luceneIndexPath : String) : SearchProvider , MoreItemsProvider {
@@ -45,7 +43,6 @@ private const val QUERY_ALL_PODCASTS = "SELECT * FROM podcasts WHERE explicit = 
 /** This method will overwrite any previously indexed podcasts */
 fun PodcastIndex.createIndex(
     sqlitePath: String,
-//    lists : Lists = lists,
     maxNumber : Int = Int.MAX_VALUE ,
     report : (done : Long , total : Long)->Unit = {_,_->},
     samplePeriod : Long = 10000,
@@ -59,14 +56,13 @@ fun PodcastIndex.createIndex(
                     .take(maxNumber)
                     .map { it.toSummary() }
                     .forEachIndexed { index, summary ->
-                        lists.addToList(summary, listName)
+                        lists.addToList(summary)
                         if (index % samplePeriod == 0L)
                             report(index.toLong(), size)
                     }
             }
         }
     }
-//    lists.close()
 }
 
 fun String?.asThumbnailUrl() =
@@ -90,23 +86,5 @@ fun ResultSet.toSummary() : Summary =
         playlistType = PlaylistType.NORMAL,
     )
 
-fun LuceneSearchResults.toItems() : Items =
-    Items(
-        items = items.toSummaries(),
-        nextPageToken = Json.encodeToString(nextPage) //nextPage?.toBinaryString()
-    )
 
 fun Items.toSearchResult() = SearchResult(this,null,null)
-//
-//fun Page.toResults(lists: Lists) : Results =
-//    lists.getPage(this).let {
-//        Results(
-//            ,
-//        )
-//    }
-
-
-fun List<ScoredDocument>.toSummaries() = mapNotNull { it.document.toSummary() }
-
-
-//fun Results.toSearchResults

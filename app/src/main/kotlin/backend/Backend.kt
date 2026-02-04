@@ -1,5 +1,6 @@
 package services
 
+import capabilities.attemptUntilOneSucceeds
 import org.jsoup.Jsoup
 
 class Backend(
@@ -104,13 +105,16 @@ fun Info.toSummary() : Summary =
         is Info.ChannelInfo -> toChannelSummary()
     }
 
-fun Info.PlaylistInfo.iter(moreItemsProvider: MoreItemsProvider) =
+fun Info.PlaylistInfo.iter(moreItemsProviders : List<MoreItemsProvider>) =
     sequence {
         var page: Items? = this@iter.items
         while (page != null) {
             yieldAll(page.items)
-            page = page.nextPageToken?.let(moreItemsProvider::moreItems)
+            page = moreItemsProviders.attemptUntilOneSucceeds { provider ->
+                provider.moreItems(page!!.nextPageToken!!)
+            }
         }
     }
+
 
 
