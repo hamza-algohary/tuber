@@ -1,6 +1,6 @@
 package services.newpipe
 
-import capabilities.OkHttpDownloader
+import backend.newpipe.OkHttpDownloader
 import services.*
 import services.Info
 import org.schabi.newpipe.extractor.search.SearchInfo

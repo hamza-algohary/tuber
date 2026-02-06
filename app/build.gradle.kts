@@ -94,6 +94,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
 
     implementation("com.prof18.rssparser:rssparser:6.1.3")
+    implementation("com.github.bjoernpetersen:m3u-parser:1.4.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

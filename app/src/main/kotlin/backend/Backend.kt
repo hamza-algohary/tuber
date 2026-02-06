@@ -54,6 +54,7 @@ fun Summary.eraseDynamicFields() =
         is Summary.ChannelSummary -> copy(subscriberCount = null , streamCount = null)
         is Summary.PlaylistSummary -> copy(numberOfItems = null)
         is Summary.StreamSummary -> copy(views = null)
+        is Summary.GenericSummary -> this
     }
 
 
@@ -73,6 +74,7 @@ val Summary.type : String get() =
         is Summary.ChannelSummary -> "channel"
         is Summary.PlaylistSummary -> "playlist"
         is Summary.StreamSummary -> "stream"
+        is Summary.GenericSummary -> "generic"
     }
 
 val emptyChannelSummary : Summary.ChannelSummary =

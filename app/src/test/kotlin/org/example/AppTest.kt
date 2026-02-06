@@ -3,13 +3,12 @@
  */
 package org.example
 
-import capabilities.OkHttpDownloader
+import backend.newpipe.OkHttpDownloader
 import backend
-import backend.Lists
-import backend.PodcastIndex
+import backend.M3uUrlHandler
 import backend.RssUrlHandler
-import backend.toSummary
 import capabilities.attemptUntilOneSucceeds
+import capabilities.resolveUrlToString
 import kotlinx.serialization.json.Json
 import main
 import org.schabi.newpipe.extractor.NewPipe
@@ -177,6 +176,17 @@ class AppTest {
             println("Name: ${it.name}")
             println("Description: ${it.description?.content}")
             println("Number of Episodes: ${it.items?.detailedItems?.size?:0} ")
+        }
+    }
+
+    @Test fun testDownloadToString() {
+        println(resolveUrlToString("https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8"))
+    }
+
+    @Test fun testM3uUrlHandler() {
+        M3uUrlHandler.infoProviders[0].playlist("https://raw.githubusercontent.com/Free-TV/IPTV/master/playlist.m3u8") .let {
+            println("URL: ${it.url}")
+            println("Number of items: ${it.items?.items?.size?:0} ")
         }
     }
 }

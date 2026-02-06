@@ -1,5 +1,6 @@
 
 import backend.Lists
+import backend.M3uUrlHandler
 import backend.PodcastIndex
 import backend.RssUrlHandler
 import backend.createIndex
@@ -38,7 +39,7 @@ operator fun Backend.plus(other : Backend) =
 
 
 val podcastindex = PodcastIndex(Config.PODCASTINDEX_INDEX_PATH)
-val backend = newpipeBackend + podcastindex.toBackend() + RssUrlHandler
+val backend = newpipeBackend + podcastindex.toBackend() + RssUrlHandler + M3uUrlHandler
 
 fun InfoProvider.infoFromUrl(url : String) : Info? =
     Try { stream(url) } ?: Try { playlist(url) } ?: Try { channel(url) }
@@ -319,31 +320,33 @@ class Help : CliktCommand(name = "help") {
 //}
 
 fun main(args: Array<String>) {
-    CLIServer.subcommands(
-        SearchProviders(),
-        Search(),
-        More(),
-        Stream(),
-        Playlist(),
-        Channel(),
-        Filters(),
-        SortOptions(),
-        Catalog(),
-        Catalogs(),
-        Help(),
-        PreparePodcastindex(),
-        ListsCommand(),
-        ListAdd(),
-        ListRemove(),
-        ListSearch(),
-        ListChannels(),
-        ListServices(),
-        ListImport(),
-        ListExport(),
-        ListDelete(),
-    ).main(args)
+    handleCLIExceptions {
+        CLIServer.subcommands(
+            SearchProviders(),
+            Search(),
+            More(),
+            Stream(),
+            Playlist(),
+            Channel(),
+            Filters(),
+            SortOptions(),
+            Catalog(),
+            Catalogs(),
+            Help(),
+            PreparePodcastindex(),
+            ListsCommand(),
+            ListAdd(),
+            ListRemove(),
+            ListSearch(),
+            ListChannels(),
+            ListServices(),
+            ListImport(),
+            ListExport(),
+            ListDelete(),
+        ).main(args)
+    }
     mediaLists.close()
-    exitProcess(0) // We have to do it because either I know nothing about coroutines, or they are just DISGUSTING (ps: it's the latter)
+    System.exit(0) // We have to do it because either I know nothing about coroutines, or they are just DISGUSTING (ps: it's the latter)
 }
 
 private inline fun <reified T> T.toJson() = globalJsonSerializer.encodeToString(this)

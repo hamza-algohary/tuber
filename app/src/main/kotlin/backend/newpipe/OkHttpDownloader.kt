@@ -1,4 +1,9 @@
-package capabilities
+package backend.newpipe
+
+/**
+ * This module should be part of NewPipeExtractor as it is written specifically to serve NewPipeExtractor.
+ * Take this into account when refactoring further down the line.
+ */
 
 import okhttp3.*
 import org.schabi.newpipe.extractor.downloader.Downloader
@@ -70,3 +75,4 @@ class OkHttpDownloader private constructor( private val client: OkHttpClient = G
         return result
     }
 }
+

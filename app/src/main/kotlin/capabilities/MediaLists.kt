@@ -19,6 +19,7 @@ import services.InvalidPageToken
 import services.Items
 import services.Summary
 import services.emptyChannelSummary
+import services.eraseDynamicFields
 import services.toPlainText
 import services.type
 import transformSentence
@@ -80,7 +81,7 @@ class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorE
         index(listName).commit {
             object : Commit {
                 override fun addToList(summary : Summary) =
-                    add(summary.toDocument(useVectorEmbeddings = useVectorEmbeddings))
+                    add(summary.eraseDynamicFields().toDocument(useVectorEmbeddings = useVectorEmbeddings))
                 override fun removeFromList(url : String) =
                     remove(url)
             }.operations()

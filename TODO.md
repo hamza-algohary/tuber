@@ -4,13 +4,13 @@
 - [X] local list search
 - [ ] ~~local list block~~ (delegate to frontend)
 - [ ] ~~search merger~~ (delegated to frontend)
-- [ ] SearchProvider rich info
-- [ ] Additional Info to distinguish Videos/Movies/Series/Podcasts, etc.
-- [ ] Ensure to clean summaries from dynamic data when storing and/or retrieving them from local lists.
+- [ ] ~~SearchProvider rich info~~ (To be discussed whether it's useful for frontend)
+- [X] Additional Info to distinguish Videos/Movies/Series/Podcasts, etc.
+- [X] Ensure to clean summaries from dynamic data when storing and/or retrieving them from local lists.
 - [ ] `all-MiniLM-L6-v2` is unsuitable for non english embeddings, replace with another one from same family
 ### URL Handlers 
-- [ ] RSS
-- [ ] M3U
+- [X] RSS
+- [X] M3U
 - [ ] yt-dlp (external)
 
 ### Search Providers 
@@ -38,7 +38,7 @@
 - [X] Disallow duplicates
 - [ ] Support caching entire channels listing , support periodic incremental sneaky update of cache with videos from whitelisted channels.
 - [ ] Auto update mechanism without lists safety
-- [ ] Auto update mechanism WITH lists safety
+- [ ] ~~Auto update mechanism WITH lists safety~~ (delegated to frontend, as it may have a different policy)
 ### Cancelled
 - [ ] ~~Vector embeddings for podcastindex~~
 - [ ] ~~Try different optimizations for embeddings like quantization, batching, embedding title only, etc.~~
@@ -46,6 +46,8 @@
 ### Notes
 - MediaCCC is not working at all.
 
-
 ### Notes to be added to README to ensure proper use
 1. Summary object may contain info not present in its corresponding info, so frontend is merge and both to get the full picture sometimes
+
+### Refactoring Ideas
+1. Move Backend.kt and Data.kt to global package, and rename backend package to services or plugins or something

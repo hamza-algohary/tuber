@@ -66,6 +66,17 @@ sealed class Summary {
         val streamCount : Long?,
     ) : Summary()
 
+    @Serializable
+    @SerialName("generic")
+    data class GenericSummary(
+        override val name : String?,
+        override val url : String?,
+        override val thumbnails : List<Thumbnail>,
+        override val service: String?,
+        override val categories: List<Category>,
+        override val related: List<Related>,
+        override val description : FormattedText?,
+    ) : Summary()
     /** A lighter version of ChannelSummary to wrap info useful for each StreamSummary's channel */
     //    data class Uploader(override val name : String, override val url : String, override val thumbnails : List<Thumbnail>, val verified : Boolean) : Summary(name, url, thumbnails)
 }
