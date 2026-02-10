@@ -64,10 +64,18 @@ dependencies {
     implementation("ai.djl:api:$djlVersion")
     implementation(platform("ai.djl:bom:$djlVersion"))
     implementation("ai.djl.huggingface:tokenizers:$djlVersion")
-    runtimeOnly("ai.djl.pytorch:pytorch-engine:$djlVersion")
-    runtimeOnly("ai.djl.pytorch:pytorch-model-zoo:$djlVersion")
+
+    runtimeOnly("ai.djl.pytorch:pytorch-engine")
+    runtimeOnly("ai.djl.pytorch:pytorch-model-zoo")
+//    // PyTorch JNI offline distribution package
+    runtimeOnly("ai.djl.pytorch:pytorch-jni")
+    runtimeOnly("ai.djl.pytorch:pytorch-native-cpu::linux-x86_64")
+
+
+
+
 //    implementation("ai.djl.pytorch:pytorch-native-auto:$djlVersion")
-    runtimeOnly("ai.djl.pytorch:pytorch-native-cpu:2.7.1")
+//    runtimeOnly("ai.djl.pytorch:pytorch-native-cpu:2.7.1")
 
     implementation("org.slf4j:slf4j-simple:2.0.17")
 
@@ -110,9 +118,15 @@ application {
 //    applicationDefaultJvmArgs += listOf("--add-modules", "jdk.incubator.vector")
 }
 
-tasks.shadowJar {
-    mergeServiceFiles()
-}
+//tasks.shadowJar {
+//    mergeServiceFiles()
+////    configurations = listOf(project.configurations.runtimeClasspath.get())
+////    from({
+////        configurations.get()
+////            .filter { it.name.contains("pytorch-native") || it.name.contains("pytorch-jni") }
+////            .map { zipTree(it) }
+////    })
+//}
 
 //tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
 //    compilerOptions {

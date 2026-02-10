@@ -1,17 +1,14 @@
-package services.newpipe
+package plugins.newpipe
 
 import capabilities.JsonSerializable
 import capabilities.fromBinaryString
 import capabilities.kStringSerializer
 import capabilities.toBinaryString
-import services.*
+import plugins.*
 import kotlinx.serialization.Contextual
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.schabi.newpipe.extractor.search.SearchInfo
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonClassDiscriminator
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import org.schabi.newpipe.extractor.*

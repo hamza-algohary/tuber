@@ -1,4 +1,4 @@
-package services.newpipe
+package plugins.newpipe
 
 typealias NewPipeSearchInfo = org.schabi.newpipe.extractor.search.SearchInfo
 typealias NewPipePlaylistType = org.schabi.newpipe.extractor.playlist.PlaylistInfo.PlaylistType

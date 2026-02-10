@@ -1,10 +1,10 @@
-package services.newpipe
+package plugins.newpipe
 
-import services.*
-import services.AudioTrackType
-import services.Info
-import services.Stream
-import services.StreamType
+import plugins.*
+import plugins.AudioTrackType
+import plugins.Info
+import plugins.Stream
+import plugins.StreamType
 import org.schabi.newpipe.extractor.*
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabInfo
 import org.schabi.newpipe.extractor.kiosk.KioskInfo
@@ -144,7 +144,9 @@ fun NewPipeStreamInfo.toStreamInfo() : Info.StreamInfo =
         videoStreams?.map { it.toVideo() }?:emptyList(),
         audioStreams?.map { it.toAudio() }?:emptyList(),
         videoOnlyStreams?.map { it.toVideo() }?:emptyList(),
-        subtitles?.map { it.toSubtitles() }?:emptyList()
+        subtitles?.map { it.toSubtitles() }?:emptyList(),
+        hlsLink = hlsUrl,
+        dashLink = dashMpdUrl
     )
 fun NewPipePlaylistInfo.toPlaylistInfo() : Info.PlaylistInfo =
     Info.PlaylistInfo(

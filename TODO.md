@@ -7,7 +7,7 @@
 - [ ] ~~SearchProvider rich info~~ (To be discussed whether it's useful for frontend)
 - [X] Additional Info to distinguish Videos/Movies/Series/Podcasts, etc.
 - [X] Ensure to clean summaries from dynamic data when storing and/or retrieving them from local lists.
-- [ ] `all-MiniLM-L6-v2` is unsuitable for non english embeddings, replace with another one from same family
+- [X] `all-MiniLM-L6-v2` is unsuitable for non english embeddings, replace with another one from same family
 ### URL Handlers 
 - [X] RSS
 - [X] M3U
@@ -50,4 +50,4 @@
 1. Summary object may contain info not present in its corresponding info, so frontend is merge and both to get the full picture sometimes
 
 ### Refactoring Ideas
-1. Move Backend.kt and Data.kt to global package, and rename backend package to services or plugins or something
+1. Move Backend.kt and Data.kt to global package, and rename backend package to plugins or plugins or something

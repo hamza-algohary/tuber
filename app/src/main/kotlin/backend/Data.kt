@@ -1,4 +1,4 @@
-package services
+package plugins
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
@@ -92,42 +92,44 @@ sealed class Info {
     abstract val related : List<Related>
     @SerialName("stream")
     @Serializable data class StreamInfo(
-        override val id : String?,
-        override val name : String?,
-        override val url : String?,
-        override val originalUrl : String?,
+        override val id: String?,
+        override val name: String?,
+        override val url: String?,
+        override val originalUrl: String?,
         override val service: String?,
         override val categories: List<Category>,
         override val related: List<Related>,
 
-        val type : StreamType?,
+        val streamType: StreamType?,
         val thumbnails: List<Thumbnail>,
         val uploadTimeStamp: Long?,
-        val duration : Long? ,
-        val ageLimit : Int? ,
-        val description: FormattedText? ,
-        val viewCount : Long? ,
-        val likeCount : Long? ,
-        val dislikeCount : Long? ,
-        val uploader : Summary.ChannelSummary? ,
-        val subUploader : Summary.ChannelSummary?,
-        val recommendations : List<Summary> ,
-        val startPosition : Long? ,
+        val duration: Long?,
+        val ageLimit: Int?,
+        val description: FormattedText?,
+        val viewCount: Long?,
+        val likeCount: Long?,
+        val dislikeCount: Long?,
+        val uploader: Summary.ChannelSummary?,
+        val subUploader: Summary.ChannelSummary?,
+        val recommendations: List<Summary>,
+        val startPosition: Long?,
 
-        val category : String? ,
-        val license : String? ,
-        val supportInfo : String? ,
-        val language : String? ,
-        val short : Boolean? ,
-        val tags : List<String> ,
-        val chapters : List<Chapter>,
+        val category: String?,
+        val license: String?,
+        val supportInfo: String?,
+        val language: String?,
+        val short: Boolean?,
+        val tags: List<String>,
+        val chapters: List<Chapter>,
         /** Each PreviewFrames object contains the preview frames of the entire
-         * video, but in a different resoltion (width x height) */
-        val previewFrames : List<PreviewFrames>,
-        val videoStreams : List<Stream.Video> ,
-        val audioStreams : List<Stream.Audio> ,
-        val videoOnlyStreams : List<Stream.Video> ,
-        val subtitles : List<Stream.Subtitles>
+         *  video, but in a different resolution (width x height) */
+        val previewFrames: List<PreviewFrames>,
+        val videoStreams: List<Stream.Video>,
+        val audioStreams: List<Stream.Audio>,
+        val videoOnlyStreams: List<Stream.Video>,
+        val subtitles: List<Stream.Subtitles>,
+        val hlsLink: String?,
+        val dashLink: String?,
     ) : Info()
     @SerialName("playlist")
     @Serializable data class PlaylistInfo(

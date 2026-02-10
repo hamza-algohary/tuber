@@ -15,20 +15,20 @@ import org.apache.lucene.search.FuzzyQuery
 import org.apache.lucene.search.Query
 import org.apache.lucene.search.TermQuery
 import org.apache.lucene.util.BytesRef
-import services.InvalidPageToken
-import services.Items
-import services.Summary
-import services.emptyChannelSummary
-import services.eraseDynamicFields
-import services.toPlainText
-import services.type
+import plugins.InvalidPageToken
+import plugins.Items
+import plugins.Summary
+import plugins.emptyChannelSummary
+import plugins.eraseDynamicFields
+import plugins.toPlainText
+import plugins.type
 import transformSentence
 import java.io.File
 
 
-fun fuzzyPhraseQueries(fieldName : String , fieldValue : String) =
+fun fuzzyPhraseQueries(fieldName : String , fieldValue : String , weight : Double = 1.0) =
     fieldValue.trim().split(" ").map { value ->
-        FuzzyQuery(Term(fieldName,value))
+        FuzzyQuery(Term(fieldName,value)) weight weight
     }.toTypedArray()
 
 /** Tokenized text. Use it for fuzzy matching and stuff.*/
@@ -87,11 +87,12 @@ class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorE
             }.operations()
         }
 
+    private val fuzzyQueryWeights = if(useVectorEmbeddings) 1.0 else 0.1
     private fun makeQuery(listName : String , query : String , useVectorEmbeddings: Boolean = this.useVectorEmbeddings): Query =
         combineQueries(
             boostWith = listOf(
-                    *fuzzyPhraseQueries("name", query),
-                    *fuzzyPhraseQueries("description", query),
+                    *fuzzyPhraseQueries("name", query , fuzzyQueryWeights),
+                    *fuzzyPhraseQueries("description", query , fuzzyQueryWeights),
                     *if (useVectorEmbeddings)
                         arrayOf(
                             transformSentence(query)?.let { vectorNearestNeighbourQuery("name-embedding",it , pageSize , /*TermQuery(Term("list", listName))*/) },
@@ -149,6 +150,13 @@ class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorE
         indexes.forEach { (listName , index) ->
             commit(listName)
             index.close()
+        }
+    }
+
+    fun reindex(listName : String) {
+        index(listName).reindex { doc ->
+            doc.toSummary()!!
+               .toDocument(useVectorEmbeddings = useVectorEmbeddings)
         }
     }
 }

@@ -5,36 +5,31 @@ import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.model.RssChannel
 import com.prof18.rssparser.model.RssItem
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.schabi.newpipe.extractor.ServiceList
-import org.schabi.newpipe.extractor.services.youtube.YoutubeService
-import services.Backend
-import services.Info
-import services.InfoProvider
-import services.Items
-import services.Stream
-import services.Summary
-import services.Thumbnail
-import services.newpipe.name
+import plugins.Backend
+import plugins.Info
+import plugins.InfoProvider
+import plugins.Items
+import plugins.Stream
+import plugins.newpipe.name
 
 private val rssParser = RssParser()
 
 /** Try `runBlocking { }` */
-suspend fun parseRssChannelFromUrl(url : String) =
-    rssParser.getRssChannel(url)
+fun parseRssChannelFromUrl(url : String) : RssChannel {
+    val result = runBlocking (Dispatchers.Default) {
+        rssParser.getRssChannel(url)
+    }
+    return result
+}
 
 val RssUrlHandler = Backend(
     listOf(
         object : InfoProvider {
             override val name = "rss"
             override fun playlist(url: String): Info.PlaylistInfo =
-                runBlocking {
-                    parseRssChannelFromUrl(url)
-                }.toPlaylist()
+                    parseRssChannelFromUrl(url).toPlaylist()
 
             override fun stream(url: String) =
                 throw UnableToHandleLinkException(url)
@@ -85,7 +80,7 @@ fun RssItem.toStreamInfo() =
         service = youtubeItemData?.let { ServiceList.YouTube.name },
         categories = emptyList(),
         related = emptyList(),
-        type = null,
+        streamType = null,
         thumbnails = listOfNotNull(image?.asThumbnailUrl() , youtubeItemData?.thumbnailUrl?.asThumbnailUrl()),
         uploadTimeStamp = null,
         duration = null,
@@ -117,5 +112,7 @@ fun RssItem.toStreamInfo() =
             )
         } ?: emptyList(),
         videoOnlyStreams = emptyList(),
-        subtitles = emptyList()
+        subtitles = emptyList(),
+        hlsLink = null,
+        dashLink = null
     )

@@ -1,4 +1,4 @@
-package services
+package plugins
 
 import capabilities.attemptUntilOneSucceeds
 import org.jsoup.Jsoup
@@ -86,7 +86,7 @@ val emptyStreamSummary : Summary.StreamSummary =
 
 fun Info.StreamInfo.toStreamSummary() =
     Summary.StreamSummary(
-        name,url,thumbnails,service,categories,related,type,
+        name,url,thumbnails,service,categories,related,streamType,
         duration,viewCount,uploadTimeStamp,description,uploader
     )
 

@@ -7,8 +7,8 @@ import backend.createIndex
 import backend.toBackend
 import capabilities.attemptUntilOneSucceeds
 import kotlinx.serialization.json.Json
-import services.*
-import services.newpipe.newpipeBackend
+import plugins.*
+import plugins.newpipe.newpipeBackend
 import java.lang.Exception
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.main
@@ -17,13 +17,11 @@ import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.split
-import kotlinx.serialization.decodeFromString
 import java.io.File
 import java.util.Scanner
 import kotlin.system.exitProcess
 import capabilities.DEBUG
-import capabilities.globalJsonSerializer
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
 fun <T> Try(func : ()->T) : T? =
     try { func() } catch (e : Exception) { null }
@@ -74,9 +72,9 @@ class Search : CliktCommand(name = "search") {
     override fun run() {
 //        backend.searchProviders
 //            .find { it.name == provider }
-        println("===filters===")
-        filters.forEach { print(it) }
-        println("=============")
+//        println("===filters===")
+//        filters.forEach { print(it) }
+//        println("=============")
         backend.searchProviderFromName(provider)
             .search(query , filters , sortBy)
             .toJson()
@@ -245,7 +243,7 @@ class ListImport : CliktCommand("list-import") {
             scanner.useDelimiter(NULL_CHAR.toString())
             while(scanner.hasNext())
                 mediaLists.commit(listName) {
-                    addToList(Json.decodeFromString<Summary>(scanner.next()))
+                    addToList(fromJson<Summary>(scanner.next()))
                 }
         }
     }
@@ -262,6 +260,13 @@ class ListServices : CliktCommand("list-services") {
     val listName : String by argument("list-name")
     override fun run() {
         mediaLists.services(listName).toJson().println()
+    }
+}
+
+class ListReindex : CliktCommand(name = "list-reindex") {
+    val listName : String by argument("list-name")
+    override fun run() {
+        mediaLists.reindex(listName)
     }
 }
 
@@ -320,36 +325,40 @@ class Help : CliktCommand(name = "help") {
 //}
 
 fun main(args: Array<String>) {
-    handleCLIExceptions {
-        CLIServer.subcommands(
-            SearchProviders(),
-            Search(),
-            More(),
-            Stream(),
-            Playlist(),
-            Channel(),
-            Filters(),
-            SortOptions(),
-            Catalog(),
-            Catalogs(),
-            Help(),
-            PreparePodcastindex(),
-            ListsCommand(),
-            ListAdd(),
-            ListRemove(),
-            ListSearch(),
-            ListChannels(),
-            ListServices(),
-            ListImport(),
-            ListExport(),
-            ListDelete(),
-        ).main(args)
+    runBlocking {
+        handleCLIExceptions {
+            CLIServer.subcommands(
+                SearchProviders(),
+                Search(),
+                More(),
+                Stream(),
+                Playlist(),
+                Channel(),
+                Filters(),
+                SortOptions(),
+                Catalog(),
+                Catalogs(),
+                Help(),
+                PreparePodcastindex(),
+                ListsCommand(),
+                ListAdd(),
+                ListRemove(),
+                ListSearch(),
+                ListChannels(),
+                ListServices(),
+                ListImport(),
+                ListExport(),
+                ListDelete(),
+                ListReindex(),
+            ).main(args)
+        }
+        mediaLists.close()
     }
-    mediaLists.close()
-    System.exit(0) // We have to do it because either I know nothing about coroutines, or they are just DISGUSTING (ps: it's the latter)
+//    System.exit(0) // We have to do it because either I know nothing about coroutines, or they are just DISGUSTING (ps: it's the latter)
 }
 
-private inline fun <reified T> T.toJson() = globalJsonSerializer.encodeToString(this)
+private inline fun <reified T> T.toJson() = Json.encodeToString(this)
+private inline fun <reified T> fromJson(string : String) = Json.decodeFromString<T>(string)
 private fun String.println() = println(this)
 private fun String.print() = print(this)
 

@@ -5,18 +5,18 @@ import capabilities.countQuery
 import capabilities.sqliteConnection
 import capabilities.useQuery
 import kotlinx.serialization.json.Json
-import services.Backend
-import services.Category
-import services.FormattedText
-import services.FormattedText.Plain
-import services.Items
-import services.MoreItemsProvider
-import services.PlaylistType
-import services.SearchProvider
-import services.SearchResult
-import services.Summary
-import services.Thumbnail
-import services.toPlainText
+import plugins.Backend
+import plugins.Category
+import plugins.FormattedText
+import plugins.FormattedText.Plain
+import plugins.Items
+import plugins.MoreItemsProvider
+import plugins.PlaylistType
+import plugins.SearchProvider
+import plugins.SearchResult
+import plugins.Summary
+import plugins.Thumbnail
+import plugins.toPlainText
 import java.sql.ResultSet
 
 

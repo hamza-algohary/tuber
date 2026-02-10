@@ -2,7 +2,7 @@ package capabilities
 
 import java.lang.Exception
 
-val DEBUG = true //System.getenv("DEBUG")=="true"
+val DEBUG = System.getenv("DEBUG")=="true"
 fun <T , O> List<T>.attemptUntilOneSucceeds(func : (T)->O) : O? {
     forEach {
         runCatching {

@@ -1,28 +1,15 @@
-# Tuber
+### Features
+1. Videos, Movies, Podcasts, Live Channels, etc.
+2. Whitelisting
 
-Tuber is a CLI frontend for YouTube, PeerTube, SoundCloud and other sites, powered by the fantastic [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) java library.
+### Streaming App Architecture
+- Frontend (Searcher + Catalog/Recommendations + Video Player and different URL Handlers)
+- Backend (Search Aggregator + URL Handler + Locally indexed lists)
+- Plugins (Search Providers + URL Handlers)
 
-Moreover, tuber is suitable for usage as a backend since all its output is in JSON format.
+### End points
+Go the help message
 
-### Installation
-1. Clone this repo
-```bash
-git clone https://github.com/hamza-algohary/tuber
-```
-2. Build
-```bash
-make
-```
-3. Give execution permission
-```bash
-chmod +x tuber.jar
-```
-4. Run the program
-```bash
-java -jar tuber.jar help
-```
-### Usage
-On running `tuber help`:
 ```bash
     Search Commands:
         search-providers                                -> List<String> 
@@ -51,13 +38,25 @@ On running `tuber help`:
     Others
         prepare-podcastindex <path to podcastindex sqlite db>  -> Progressive null-delimited stream of Progress objects each in Json format.
 ```
-Example
-```bash
-java -jar tuber.jar search youtube "linux" --filters video:audio --sort date
-```
 
-All output is in JSON. To know structure of resulted JSONs, please refer to [app/src/main/kotlin/backend/Data.kt](app/src/main/kotlin/backend/Data.kt).
+### Implementation Plugins
+- NewPipeExtractor (Search + URL Handlers) (YouTube, SoundCloud, PeerTube + 2 other sites)
+- PodcastIndex Search
+- RSS URL Handler (Podcasts and others)
+- M3U (IPTV)
 
-Also run `make test` to see all JSON outputs in `app/test_results`
+### Capabilities
+- Locally indexed lists (supports exact and fuzzy and semantic search)
+  - Using Apache Lucene (Fuzzy Search + Vector Search)
+  - Using DJL (Vector embedding model)
+  - Used in PodcastIndex (without semantic search, IPTV and Whitelists)
 
-In case of an error the program exit code is 1 and error message is printed. **Maybe we should assign every error a sepecific error code?**
+### What is left
+- Packaging 
+
+### To Be Done Later
+- Update Mechanism
+- Plugins
+  - Web Search
+  - yt-dlp
+  - 

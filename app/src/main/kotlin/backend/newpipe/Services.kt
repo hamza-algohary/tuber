@@ -1,8 +1,8 @@
-package services.newpipe
+package plugins.newpipe
 
 import backend.newpipe.OkHttpDownloader
-import services.*
-import services.Info
+import plugins.*
+import plugins.Info
 import org.schabi.newpipe.extractor.search.SearchInfo
 import org.schabi.newpipe.extractor.*
 import org.schabi.newpipe.extractor.channel.ChannelInfo
