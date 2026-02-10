@@ -4,7 +4,7 @@ import UnableToHandleLinkException
 import capabilities.resolveUrlToString
 import net.bjoernpetersen.m3u.M3uParser
 import net.bjoernpetersen.m3u.model.M3uEntry
-import Backend
+import Plugin
 import Info
 import InfoProvider
 import Items
@@ -15,7 +15,7 @@ fun parseM3UPlaylistFromUrl(url : String) : List<Summary.GenericSummary> =
     M3uParser.parse(resolveUrlToString(url))
         .map { it.toSummary() }
 
-val M3uUrlHandler = Backend(
+val M3uUrlHandler = Plugin(
     listOf(
         object : InfoProvider {
             override val name = "m3u"

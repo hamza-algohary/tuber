@@ -7,7 +7,7 @@ import com.prof18.rssparser.model.RssItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.schabi.newpipe.extractor.ServiceList
-import Backend
+import Plugin
 import Info
 import InfoProvider
 import Items
@@ -24,7 +24,7 @@ fun parseRssChannelFromUrl(url : String) : RssChannel {
     return result
 }
 
-val RssUrlHandler = Backend(
+val RssUrlHandler = Plugin(
     listOf(
         object : InfoProvider {
             override val name = "rss"

@@ -4,10 +4,10 @@ import plugins.M3uUrlHandler
 import plugins.PodcastIndex
 import plugins.RssUrlHandler
 import plugins.createIndex
-import plugins.toBackend
+import plugins.toPlugin
 import capabilities.attemptUntilOneSucceeds
 import kotlinx.serialization.json.Json
-import plugins.newpipe.newpipeBackend
+import plugins.newpipe.newpipePlugin
 import java.lang.Exception
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.main
@@ -25,8 +25,8 @@ import kotlinx.coroutines.runBlocking
 fun <T> Try(func : ()->T) : T? =
     try { func() } catch (e : Exception) { null }
 
-operator fun Backend.plus(other : Backend) =
-    Backend(
+operator fun Plugin.plus(other : Plugin) =
+    Plugin(
         infoProviders + other.infoProviders,
         moreItemsProvider + other.moreItemsProvider,
         searchProviders + other.searchProviders ,
@@ -36,11 +36,11 @@ operator fun Backend.plus(other : Backend) =
 
 
 val podcastindex = PodcastIndex(Config.PODCASTINDEX_INDEX_PATH)
-val backend = newpipeBackend + podcastindex.toBackend() + RssUrlHandler + M3uUrlHandler
+val backend = newpipePlugin + podcastindex.toPlugin() + RssUrlHandler + M3uUrlHandler
 
 fun InfoProvider.infoFromUrl(url : String) : Info? =
     Try { stream(url) } ?: Try { playlist(url) } ?: Try { channel(url) }
-fun Backend.infoFromUrl(url : String) =
+fun Plugin.infoFromUrl(url : String) =
     infoProviders.attemptUntilOneSucceeds { provider -> provider.infoFromUrl(url) }
 
 
@@ -58,8 +58,8 @@ class SearchProviders : CliktCommand(name = "search-providers") {
     }
 }
 
-fun Backend.searchProviderFromName(name : String) = searchProviders.find { it.name == name }?: throw UnknownServiceName(name)
-fun Backend.catalogProviderFromName(name : String) = catalogProviders.find { it.name == name }?: throw UnknownServiceName(name)
+fun Plugin.searchProviderFromName(name : String) = searchProviders.find { it.name == name }?: throw UnknownServiceName(name)
+fun Plugin.catalogProviderFromName(name : String) = catalogProviders.find { it.name == name }?: throw UnknownServiceName(name)
 
 
 class Search : CliktCommand(name = "search") {
@@ -144,7 +144,7 @@ class Catalogs : CliktCommand(name = "catalogs") {
 }
 
 class Catalog : CliktCommand(name = "catalog") {
-    private val catalogProvider : String by argument("catalog-provider")
+    val catalogProvider : String by argument("catalog-provider")
     override fun run() {
         backend.catalogProviderFromName(catalogProvider).catalog().toJson().println()
     }

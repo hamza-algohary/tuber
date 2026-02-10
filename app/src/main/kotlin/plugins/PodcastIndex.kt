@@ -5,7 +5,7 @@ import capabilities.countQuery
 import capabilities.sqliteConnection
 import capabilities.useQuery
 import kotlinx.serialization.json.Json
-import Backend
+import Plugin
 import Category
 import FormattedText
 import FormattedText.Plain
@@ -20,15 +20,15 @@ import toPlainText
 import java.sql.ResultSet
 
 
-const val backendName = "podcastindex"
+private const val pluginName = "podcastindex"
 
 class PodcastIndex(val luceneIndexPath : String) : SearchProvider , MoreItemsProvider {
     val lists by lazy {
         Lists(luceneIndexPath , useVectorEmbeddings=false)
     }
-    override val name = backendName
+    override val name = pluginName
     override fun search(query: String, filters: List<String>, sortBy: String): SearchResult =
-        lists.search(backendName , query).toSearchResult()
+        lists.search(pluginName , query).toSearchResult()
 
     override fun filters() : List<String> = emptyList()
     override fun sortOptions(): List<String> = emptyList()
@@ -37,8 +37,8 @@ class PodcastIndex(val luceneIndexPath : String) : SearchProvider , MoreItemsPro
         lists.getPage(Json.decodeFromString<Page>(pageToken)).toItems()
 }
 
-fun PodcastIndex.toBackend() = let {
-    Backend(emptyList(), listOf(it), listOf(it), emptyList())
+fun PodcastIndex.toPlugin() = let {
+    Plugin(emptyList(), listOf(it), listOf(it), emptyList())
 }
 private const val QUERY_ALL_PODCASTS = "SELECT * FROM podcasts WHERE explicit = 0;"
 /** This method will overwrite any previously indexed podcasts */
@@ -47,7 +47,7 @@ fun PodcastIndex.createIndex(
     maxNumber : Int = Int.MAX_VALUE ,
     report : (done : Long , total : Long)->Unit = {_,_->},
     samplePeriod : Long = 10000,
-    listName : String = backendName
+    listName : String = pluginName
 ) {
     sqliteConnection(sqlitePath) {
         val size = countQuery(QUERY_ALL_PODCASTS)
@@ -80,7 +80,7 @@ fun ResultSet.toSummary() : Summary =
         name = getString("title"),
         url = getString("url"),
         thumbnails = listOfNotNull(getString("imageUrl").asThumbnailUrl()),
-        service = backendName,
+        service = pluginName,
         categories = listOf(Category.PODCAST),
         related = emptyList(),
         description = FormattedText.HTML(getString("description")),

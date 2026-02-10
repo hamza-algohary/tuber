@@ -1,6 +1,6 @@
 package plugins.newpipe
 
-import Backend
+import Plugin
 import CatalogProvider
 import Info
 import InfoProvider
@@ -29,7 +29,7 @@ fun init() {
     NewPipe.init(OkHttpDownloader())
 }
 
-val newpipeBackend = Backend(
+val newpipePlugin = Plugin(
     searchProviders =  listOf(YouTube , PeerTube , SoundCloud , BandCamp /*, MediaCCC*/) ,
     infoProviders = listOf(
         object : InfoProvider {

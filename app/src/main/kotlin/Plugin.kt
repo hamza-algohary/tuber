@@ -3,19 +3,36 @@ import org.commonmark.parser.Parser
 import org.commonmark.renderer.text.TextContentRenderer
 import org.jsoup.Jsoup
 
-class Backend(
-    val infoProviders : List<InfoProvider> ,
-    val moreItemsProvider: List<MoreItemsProvider> ,
-    val searchProviders : List<SearchProvider> ,
-    val catalogProviders: List<CatalogProvider> ,
-    val categories : List<String> = emptyList(),
-    init : ()->Unit = {} ,
-    condition : ()->Boolean = {true} ,
+class Plugin(
+    infoProviders : List<InfoProvider> ,
+    moreItemsProvider: List<MoreItemsProvider> ,
+    searchProviders : List<SearchProvider> ,
+    catalogProviders: List<CatalogProvider> ,
+    categories : List<String> = emptyList(),
+    val init : ()->Unit = {} ,
+    val condition : ()->Boolean = {true} ,
 ) {
-    init {
-        if (condition())
-            init()
-    }
+    //    init {
+    //        if (condition())
+    //            init()
+    //    }
+    private var initialized = false
+    val infoProviders : List<InfoProvider> = infoProviders
+        get() = checkInitialized(field)
+    val moreItemsProvider: List<MoreItemsProvider> = moreItemsProvider
+        get() = checkInitialized(field)
+    val searchProviders : List<SearchProvider> = searchProviders
+        get() = checkInitialized(field)
+    val catalogProviders: List<CatalogProvider> = catalogProviders
+        get() = checkInitialized(field)
+    val categories : List<String> = categories
+        get() = checkInitialized(field)
+
+    fun <T> checkInitialized(value : T) =
+        value.also {
+            if (!initialized) init()
+            initialized = true
+        }
 }
 
 interface InfoProvider {
@@ -35,8 +52,6 @@ interface SearchProvider {
     fun search(query : String , filters : List<String> = emptyList() , sortBy : String = "") : SearchResult
     fun filters() : List<String>
     fun sortOptions() : List<String>
-//    fun kiosks() : List<String>
-//    fun kiosk(name : String) : Items
 }
 
 interface CatalogProvider {

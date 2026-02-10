@@ -142,7 +142,7 @@ class AppTest {
     fun warning(message : String) = println(yellow("Warning: ") + message)
     fun good(message : String) = println(green("Good: ") + message)
 
-    fun Backend.testSearch() {
+    fun Plugin.testSearch() {
         searchProviders.forEach {
             try {
                 it.search("linux").let { results ->

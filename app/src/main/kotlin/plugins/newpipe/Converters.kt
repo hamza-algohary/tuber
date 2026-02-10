@@ -1,6 +1,5 @@
 package plugins.newpipe
 
-import plugins.*
 import AudioTrackType
 import Chapter
 import FormattedText
@@ -320,7 +319,7 @@ fun Description.toFormattedText() : FormattedText =
 
 fun NewPipeStreamType.toStreamType() : StreamType =
     when (this) {
-        org.schabi.newpipe.extractor.stream.StreamType.NONE -> throw Exception("backends.StreamType of type NONE (THIS SHOULD NEVER HAPPEN)")
+        org.schabi.newpipe.extractor.stream.StreamType.NONE -> throw Exception("StreamType of type NONE (THIS SHOULD NEVER HAPPEN)")
         org.schabi.newpipe.extractor.stream.StreamType.VIDEO_STREAM -> StreamType.VIDEO
         org.schabi.newpipe.extractor.stream.StreamType.AUDIO_STREAM -> StreamType.AUDIO
         org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM -> StreamType.VIDEO_LIVE
