@@ -1,10 +1,18 @@
 package plugins.newpipe
 
 import plugins.*
-import plugins.AudioTrackType
-import plugins.Info
-import plugins.Stream
-import plugins.StreamType
+import AudioTrackType
+import Chapter
+import FormattedText
+import Info
+import Items
+import PlaylistType
+import PreviewFrames
+import SearchResult
+import Stream
+import StreamType
+import Summary
+import Thumbnail
 import org.schabi.newpipe.extractor.*
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabInfo
 import org.schabi.newpipe.extractor.kiosk.KioskInfo

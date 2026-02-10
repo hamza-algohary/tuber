@@ -1,4 +1,4 @@
-package backend
+package plugins
 
 import kotlinx.serialization.json.Json
 import org.apache.lucene.document.Document
@@ -15,13 +15,13 @@ import org.apache.lucene.search.FuzzyQuery
 import org.apache.lucene.search.Query
 import org.apache.lucene.search.TermQuery
 import org.apache.lucene.util.BytesRef
-import plugins.InvalidPageToken
-import plugins.Items
-import plugins.Summary
-import plugins.emptyChannelSummary
-import plugins.eraseDynamicFields
-import plugins.toPlainText
-import plugins.type
+import InvalidPageToken
+import Items
+import Summary
+import emptyChannelSummary
+import eraseDynamicFields
+import toPlainText
+import type
 import transformSentence
 import java.io.File
 

@@ -1,4 +1,4 @@
-package backend.newpipe
+package plugins.newpipe
 
 /**
  * This module should be part of NewPipeExtractor as it is written specifically to serve NewPipeExtractor.

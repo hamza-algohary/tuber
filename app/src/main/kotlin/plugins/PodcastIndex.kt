@@ -1,22 +1,22 @@
-package backend
+package plugins
 
 import capabilities.asSequence
 import capabilities.countQuery
 import capabilities.sqliteConnection
 import capabilities.useQuery
 import kotlinx.serialization.json.Json
-import plugins.Backend
-import plugins.Category
-import plugins.FormattedText
-import plugins.FormattedText.Plain
-import plugins.Items
-import plugins.MoreItemsProvider
-import plugins.PlaylistType
-import plugins.SearchProvider
-import plugins.SearchResult
-import plugins.Summary
-import plugins.Thumbnail
-import plugins.toPlainText
+import Backend
+import Category
+import FormattedText
+import FormattedText.Plain
+import Items
+import MoreItemsProvider
+import PlaylistType
+import SearchProvider
+import SearchResult
+import Summary
+import Thumbnail
+import toPlainText
 import java.sql.ResultSet
 
 

@@ -4,16 +4,15 @@
 
 import ai.djl.Application
 import ai.djl.repository.zoo.ModelZoo
-import backend.newpipe.OkHttpDownloader
-import backend.M3uUrlHandler
-import backend.RssUrlHandler
+import plugins.newpipe.OkHttpDownloader
+import plugins.M3uUrlHandler
+import plugins.RssUrlHandler
 import capabilities.attemptUntilOneSucceeds
 import capabilities.resolveUrlToString
 import kotlinx.serialization.json.Json
 import org.schabi.newpipe.extractor.NewPipe
 import org.schabi.newpipe.extractor.ServiceList
 import org.schabi.newpipe.extractor.search.SearchInfo
-import plugins.Backend
 import plugins.newpipe.*
 import java.io.File
 import java.io.FileOutputStream

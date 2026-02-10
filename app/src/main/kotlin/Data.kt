@@ -1,5 +1,3 @@
-package plugins
-
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

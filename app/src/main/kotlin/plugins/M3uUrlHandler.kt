@@ -1,15 +1,15 @@
-package backend
+package plugins
 
 import UnableToHandleLinkException
 import capabilities.resolveUrlToString
 import net.bjoernpetersen.m3u.M3uParser
 import net.bjoernpetersen.m3u.model.M3uEntry
-import plugins.Backend
-import plugins.Info
-import plugins.InfoProvider
-import plugins.Items
-import plugins.PlaylistType
-import plugins.Summary
+import Backend
+import Info
+import InfoProvider
+import Items
+import PlaylistType
+import Summary
 
 fun parseM3UPlaylistFromUrl(url : String) : List<Summary.GenericSummary> =
     M3uParser.parse(resolveUrlToString(url))

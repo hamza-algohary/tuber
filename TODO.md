@@ -50,4 +50,4 @@
 1. Summary object may contain info not present in its corresponding info, so frontend is merge and both to get the full picture sometimes
 
 ### Refactoring Ideas
-1. Move Backend.kt and Data.kt to global package, and rename backend package to plugins or plugins or something
+1. Move Backend.kt and Data.kt to global package, and rename plugins package to plugins or plugins or something

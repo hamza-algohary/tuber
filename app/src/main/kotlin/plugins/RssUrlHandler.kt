@@ -1,4 +1,4 @@
-package backend
+package plugins
 
 import UnableToHandleLinkException
 import com.prof18.rssparser.RssParser
@@ -7,11 +7,11 @@ import com.prof18.rssparser.model.RssItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.schabi.newpipe.extractor.ServiceList
-import plugins.Backend
-import plugins.Info
-import plugins.InfoProvider
-import plugins.Items
-import plugins.Stream
+import Backend
+import Info
+import InfoProvider
+import Items
+import Stream
 import plugins.newpipe.name
 
 private val rssParser = RssParser()

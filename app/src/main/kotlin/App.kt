@@ -1,13 +1,12 @@
 
-import backend.Lists
-import backend.M3uUrlHandler
-import backend.PodcastIndex
-import backend.RssUrlHandler
-import backend.createIndex
-import backend.toBackend
+import plugins.Lists
+import plugins.M3uUrlHandler
+import plugins.PodcastIndex
+import plugins.RssUrlHandler
+import plugins.createIndex
+import plugins.toBackend
 import capabilities.attemptUntilOneSucceeds
 import kotlinx.serialization.json.Json
-import plugins.*
 import plugins.newpipe.newpipeBackend
 import java.lang.Exception
 import com.github.ajalt.clikt.core.CliktCommand

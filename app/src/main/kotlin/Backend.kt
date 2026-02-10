@@ -1,6 +1,6 @@
-package plugins
-
 import capabilities.attemptUntilOneSucceeds
+import org.commonmark.parser.Parser
+import org.commonmark.renderer.text.TextContentRenderer
 import org.jsoup.Jsoup
 
 class Backend(
@@ -62,8 +62,8 @@ fun FormattedText?.toPlainText() =
     when(this) {
         is FormattedText.HTML -> Jsoup.parse(content).text()
         is FormattedText.Markdown ->
-            org.commonmark.parser.Parser.Builder().build().parse(content).let {
-                org.commonmark.renderer.text.TextContentRenderer.builder().build().render(it)
+            Parser.Builder().build().parse(content).let {
+                TextContentRenderer.builder().build().render(it)
             }
         is FormattedText.Plain -> content
         null -> ""
