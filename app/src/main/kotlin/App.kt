@@ -93,7 +93,7 @@ class More : CliktCommand(name = "more") {
     }
 }
 
-class Stream : CliktCommand(name = "stream") {
+class StreamCommand : CliktCommand(name = "stream") {
     private val url by argument("url")
 
     override fun run() {
@@ -331,7 +331,7 @@ fun main(args: Array<String>) {
                 SearchProviders(),
                 Search(),
                 More(),
-                Stream(),
+                StreamCommand(),
                 Playlist(),
                 Channel(),
                 Filters(),
