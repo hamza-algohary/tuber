@@ -1,17 +1,17 @@
 package plugins.newpipe
 
-import AudioTrackType
-import Chapter
-import FormattedText
-import Info
-import Items
-import PlaylistType
-import PreviewFrames
-import SearchResult
-import Stream
-import StreamType
-import Summary
-import Thumbnail
+import plugins.AudioTrackType
+import plugins.Chapter
+import plugins.FormattedText
+import plugins.Info
+import plugins.Items
+import plugins.PlaylistType
+import plugins.PreviewFrames
+import plugins.SearchResult
+import plugins.Stream
+import plugins.StreamType
+import plugins.Summary
+import plugins.Thumbnail
 import org.schabi.newpipe.extractor.*
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabInfo
 import org.schabi.newpipe.extractor.kiosk.KioskInfo
@@ -95,7 +95,7 @@ fun NewPipeChannelInfoItem.toChannelSummary() : Summary.ChannelSummary =
     )
 
 
-// =============== Info ================
+// =============== plugins.Info ================
 fun NewPipeStreamInfo.toStreamInfo() : Info.StreamInfo =
     Info.StreamInfo(
         id,
@@ -319,7 +319,7 @@ fun Description.toFormattedText() : FormattedText =
 
 fun NewPipeStreamType.toStreamType() : StreamType =
     when (this) {
-        org.schabi.newpipe.extractor.stream.StreamType.NONE -> throw Exception("StreamType of type NONE (THIS SHOULD NEVER HAPPEN)")
+        org.schabi.newpipe.extractor.stream.StreamType.NONE -> throw Exception("plugins.StreamType of plugins.type NONE (THIS SHOULD NEVER HAPPEN)")
         org.schabi.newpipe.extractor.stream.StreamType.VIDEO_STREAM -> StreamType.VIDEO
         org.schabi.newpipe.extractor.stream.StreamType.AUDIO_STREAM -> StreamType.AUDIO
         org.schabi.newpipe.extractor.stream.StreamType.LIVE_STREAM -> StreamType.VIDEO_LIVE

@@ -177,12 +177,14 @@ tasks.named<Test>("test") {
     }
 }
 
-//tasks.register<JavaExec>("preparePodcastIndex") {
-//    group = "build setup"
-//    description = "Converts PodcastIndex db into an Apache Luecne index as a resource."
-//    classpath = sourceSets["main"].runtimeClasspath
-//    mainClass.set("tasks.PodcastIndex")
-//}
+tasks.register<JavaExec>("release") {
+    group = "release"
+    description = "create a new release on GitHub"
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("tasks.Release")
+    dependsOn("build","test")
+}
+
 //
 //tasks.register<JavaExec>("podcastSearchRepl") {
 //    group = null

@@ -1,8 +1,8 @@
+import plugins.FormattedText
 
 
 object Config {
     const val APP_NAME = "tuber"
-    const val APP_VERSION = "0.5"
     val DATA_PATH by lazy { "${get_XDG_HOME()}/$APP_NAME" }
     val LUCENE_INDEX_PATH = "$DATA_PATH/index"
     val MEDIA_LISTS_PATH = "$LUCENE_INDEX_PATH/lists"
@@ -18,4 +18,31 @@ fun get_XDG_HOME() =
 
 /** returns null if environment [variable] is empty */
 //fun env(variable : String) = System.getenv(variable)?.takeIf { it.isNotEmpty() }
-class UndefinedEnvironmentVariables(vararg anyOf : String) : Exception("Non of the following environment variables is defined: ${anyOf.joinToString(",")}")
+
+object BuildInfo {
+    data class Version(val major: Int, val minor: Int, val patch: Int) {
+        override fun toString(): String = "$major.$minor.$patch"
+    }
+    operator fun Version.compareTo(other: Version): Int = when {
+        major != other.major -> major - other.major
+        minor != other.minor -> minor - other.minor
+        else                 -> patch - other.patch
+    }
+    val currentVersion = Version(0,1,0)
+    val currentReleaseNotes = getReleaseNotesForVersion(currentVersion)?.notes
+
+    val isDebug by lazy {
+        System.getenv("DEBUG") == "true"
+    }
+
+    data class ReleaseNotes(val version: Version , val notes : FormattedText)
+    val releaseNotesForAllVersions = listOf<ReleaseNotes>(
+        ReleaseNotes(Version(0,1,0) , plain("First Release hooray \uD83C\uDF89"))
+    )
+    fun getReleaseNotesForVersion(version: Version) = releaseNotesForAllVersions.find { it.version == version }
+
+}
+
+private fun html(str : String) = FormattedText.HTML(str)
+private fun md(str : String) = FormattedText.HTML(str)
+private fun plain(str : String) = FormattedText.HTML(str)

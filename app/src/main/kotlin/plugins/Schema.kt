@@ -1,3 +1,5 @@
+package plugins
+
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -76,7 +78,7 @@ sealed class Summary {
         override val description : FormattedText?,
     ) : Summary()
     /** A lighter version of ChannelSummary to wrap info useful for each StreamSummary's channel */
-    //    data class Uploader(override val name : String, override val url : String, override val thumbnails : List<Thumbnail>, val verified : Boolean) : Summary(name, url, thumbnails)
+    //    data class Uploader(override val name : String, override val url : String, override val thumbnails : List<plugins.Thumbnail>, val verified : Boolean) : plugins.Summary(name, url, thumbnails)
 }
 
 @Serializable
@@ -119,7 +121,7 @@ sealed class Info {
         val short: Boolean?,
         val tags: List<String>,
         val chapters: List<Chapter>,
-        /** Each PreviewFrames object contains the preview frames of the entire
+        /** Each plugins.PreviewFrames object contains the preview frames of the entire
          *  video, but in a different resolution (width x height) */
         val previewFrames: List<PreviewFrames>,
         val videoStreams: List<Stream.Video>,
@@ -269,7 +271,3 @@ data class PreviewFrames(
 
 @Serializable data class Progress(val progress : Long , val total : Long)
 
-class UnidentifiableService(message : String) : Exception("Unidentifiable Service: $message ")
-class UnknownServiceName(val name : String) : Exception("Unknown service name: $name")
-class PageIsNull : Exception("Page is null")
-class InvalidPageToken : Exception("Invalid page token")

@@ -1,51 +1,19 @@
-package plugins
+package plugins.rss
 
-import UnableToHandleLinkException
-import com.prof18.rssparser.RssParser
+import plugins.Items
 import com.prof18.rssparser.model.RssChannel
 import com.prof18.rssparser.model.RssItem
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import org.schabi.newpipe.extractor.ServiceList
-import Plugin
-import Info
-import InfoProvider
-import Items
-import Stream
+import plugins.Info
+import plugins.Stream
 import plugins.newpipe.name
+import plugins.podcastindex.asPlainText
+import plugins.podcastindex.asThumbnailUrl
 
-private val rssParser = RssParser()
 
-/** Try `runBlocking { }` */
-fun parseRssChannelFromUrl(url : String) : RssChannel {
-    val result = runBlocking (Dispatchers.Default) {
-        rssParser.getRssChannel(url)
-    }
-    return result
-}
-
-val RssUrlHandler = Plugin(
-    listOf(
-        object : InfoProvider {
-            override val name = "rss"
-            override fun playlist(url: String): Info.PlaylistInfo =
-                    parseRssChannelFromUrl(url).toPlaylist()
-
-            override fun stream(url: String) =
-                throw UnableToHandleLinkException(url)
-
-            override fun channel(url: String) =
-                throw UnableToHandleLinkException(url)
-        }
-    ),
-    emptyList(),
-    emptyList(),
-    emptyList(),
-)
-
-fun RssChannel.toPlaylist() = 
+fun RssChannel.toPlaylist() =
     Info.PlaylistInfo(
-        url = link, 
+        url = link,
         originalUrl = link,
         id = youtubeChannelData?.channelId,
         name = title,

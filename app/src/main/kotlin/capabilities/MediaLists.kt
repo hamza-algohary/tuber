@@ -1,4 +1,4 @@
-package plugins
+package capabilities
 
 import kotlinx.serialization.json.Json
 import org.apache.lucene.document.Document
@@ -16,13 +16,10 @@ import org.apache.lucene.search.Query
 import org.apache.lucene.search.TermQuery
 import org.apache.lucene.util.BytesRef
 import InvalidPageToken
-import Items
-import Summary
-import emptyChannelSummary
-import eraseDynamicFields
-import toPlainText
-import type
-import transformSentence
+import plugins.emptyChannelSummary
+import plugins.eraseDynamicFields
+import plugins.toPlainText
+import plugins.type
 import java.io.File
 
 
@@ -42,45 +39,45 @@ fun filter(name : String , value : String , store : Store = Store.NO) =
         StringField(name , value , store) ,
         SortedDocValuesField(name, BytesRef(value))
     )
-fun Summary.vectors() = arrayOf(
+fun plugins.Summary.vectors() = arrayOf(
     vector("name-embedding" , transformSentence(name?:"")),
     vector("description-embedding" , transformSentence(description.toPlainText())),
 )
 
-fun Summary.toDocument(vararg additionalFields : Field , useVectorEmbeddings : Boolean) =
+fun plugins.Summary.toDocument(vararg additionalFields : Field, useVectorEmbeddings : Boolean) =
     document(
-        text("name", name) ,
-        text("description" , description.toPlainText()),
+        text("name", name),
+        text("description", description.toPlainText()),
         *if (useVectorEmbeddings) vectors() else emptyArray(),
-        string("type",type),
+        string("type", type),
         string("url", url), // For sorting/pagination
-        *filter("service",service?:""),
-        StoredField("json" , Json.encodeToString(this)),
-        *categories.map { string("category" , it.name) }.toTypedArray(),
+        *filter("service", service ?: ""),
+        StoredField("json", Json.encodeToString(this)),
+        *categories.map { string("category", it.name) }.toTypedArray(),
         *additionalFields
     )
 
-fun Document.toSummary() : Summary? =
+fun Document.toSummary() : plugins.Summary? =
     get("json")?.let(Json::decodeFromString)
 
 
 class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorEmbeddings: Boolean=true) : AutoCloseable {
-    private val indexes = HashMap<String,DocumentsIndex>()
+    private val indexes = HashMap<String, DocumentsIndex>()
     private fun indexPath(listName : String) = "$indexDirectory/$listName"
     private fun index(listName : String) =
         indexes.getOrPut(listName) {
-            DocumentsIndex(indexPath(listName) , pageSize = pageSize , uniqueFieldName = "url")
+            DocumentsIndex(indexPath(listName), pageSize = pageSize, uniqueFieldName = "url")
         }
 
     interface Commit {
-        fun addToList(summary: Summary) : Any
+        fun addToList(summary: plugins.Summary) : Any
         fun removeFromList(url : String) : Any
     }
 
     fun <T> commit(listName : String , operations : Commit.()->T ) =
         index(listName).commit {
             object : Commit {
-                override fun addToList(summary : Summary) =
+                override fun addToList(summary : plugins.Summary) =
                     add(summary.eraseDynamicFields().toDocument(useVectorEmbeddings = useVectorEmbeddings))
                 override fun removeFromList(url : String) =
                     remove(url)
@@ -91,19 +88,31 @@ class Lists(val indexDirectory : String ,val pageSize : Int = 50 ,val useVectorE
     private fun makeQuery(listName : String , query : String , useVectorEmbeddings: Boolean = this.useVectorEmbeddings): Query =
         combineQueries(
             boostWith = listOf(
-                    *fuzzyPhraseQueries("name", query , fuzzyQueryWeights),
-                    *fuzzyPhraseQueries("description", query , fuzzyQueryWeights),
-                    *if (useVectorEmbeddings)
-                        arrayOf(
-                            transformSentence(query)?.let { vectorNearestNeighbourQuery("name-embedding",it , pageSize , /*TermQuery(Term("list", listName))*/) },
-                            transformSentence(query)?.let { vectorNearestNeighbourQuery("description-embedding",it , pageSize , /*TermQuery(Term("list", listName))*/) },
-                        )
-                    else emptyArray()
+                *fuzzyPhraseQueries("name", query, fuzzyQueryWeights),
+                *fuzzyPhraseQueries("description", query, fuzzyQueryWeights),
+                *if (useVectorEmbeddings)
+                    arrayOf(
+                        transformSentence(query)?.let {
+                            vectorNearestNeighbourQuery(
+                                "name-embedding",
+                                it,
+                                pageSize, /*TermQuery(Term("list", listName))*/
+                            )
+                        },
+                        transformSentence(query)?.let {
+                            vectorNearestNeighbourQuery(
+                                "description-embedding",
+                                it,
+                                pageSize, /*TermQuery(Term("list", listName))*/
+                            )
+                        },
+                    )
+                else emptyArray()
             ),
         )
 
     /** Use empty [listName] to search in all lists */
-    fun search(listName : String , query : String , useVectorEmbeddings: Boolean = this.useVectorEmbeddings) : Items =
+    fun search(listName : String , query : String , useVectorEmbeddings: Boolean = this.useVectorEmbeddings) : plugins.Items =
         index(listName).search(makeQuery(listName,query,useVectorEmbeddings)).also {
             it.nextPage?.metaData?.putAll(
                 mapOf(
@@ -175,8 +184,8 @@ private fun deleteDir(path: String) =
 fun List<ScoredDocument>.toSummaries() = mapNotNull { it.document.toSummary() }
 fun Sequence<ScoredDocument>.toSummaries() = mapNotNull { it.document.toSummary() }
 
-fun LuceneSearchResults.toItems() : Items =
-    Items(
+fun LuceneSearchResults.toItems() : plugins.Items =
+    _root_ide_package_.plugins.Items(
         items = items.toSummaries(),
         emptyList(),
         nextPageToken = Json.encodeToString(nextPage) //nextPage?.toBinaryString()

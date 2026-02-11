@@ -1,12 +1,12 @@
 package plugins.newpipe
 
-import Plugin
-import CatalogProvider
-import Info
-import InfoProvider
-import MoreItemsProvider
-import SearchProvider
-import SearchResult
+import plugins.Plugin
+import plugins.CatalogProvider
+import plugins.Info
+import plugins.InfoProvider
+import plugins.MoreItemsProvider
+import plugins.SearchProvider
+import plugins.SearchResult
 import UnidentifiableService
 import org.schabi.newpipe.extractor.search.SearchInfo
 import org.schabi.newpipe.extractor.*
@@ -83,7 +83,7 @@ private fun StreamingService.asSearchProvider() : SearchProvider =
         override fun filters() = this@asSearchProvider.contentFilters()
         override fun sortOptions() = this@asSearchProvider.sortFilters()
 //        override fun kiosks() = this@asSearchProvider.kiosks()
-//        override fun kiosk(name: String) = Items(emptyList(),null)
+//        override fun kiosk(name: String) = plugins.Items(emptyList(),null)
     }
 
 fun StreamingService.search(query : String , filters : List<String> = emptyList() , sortBy : String = "") : SearchResult =

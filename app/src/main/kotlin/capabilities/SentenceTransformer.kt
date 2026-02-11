@@ -1,3 +1,5 @@
+package capabilities
+
 import ai.djl.huggingface.translator.TextEmbeddingTranslatorFactory
 import ai.djl.inference.Predictor
 import ai.djl.repository.zoo.Criteria
@@ -32,7 +34,7 @@ fun List<String>.sortBySimilarityTo(reference : String) =
     }
 
 
-private fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
+fun cosineSimilarity(a: FloatArray, b: FloatArray): Float {
     require(a.size == b.size)
 
     var dot = 0.0

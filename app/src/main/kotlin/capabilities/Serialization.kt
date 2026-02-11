@@ -21,7 +21,7 @@ import kotlin.reflect.KClass
 /**
  * Conventions to stick to:
  * 1. Json serialization is by providing toJson() method, by implementing [JsonSerializable] interface.
- * 2. Json deserialization is by providing fromJson() method for Companion object of intended type.
+ * 2. Json deserialization is by providing fromJson() method for Companion object of intended plugins.type.
  */
 
 //val globalJsonSerializer = Json {

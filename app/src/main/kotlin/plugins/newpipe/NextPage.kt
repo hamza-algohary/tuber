@@ -1,6 +1,6 @@
 package plugins.newpipe
 
-import Items
+import plugins.Items
 import PageIsNull
 import UnknownServiceName
 import capabilities.JsonSerializable
@@ -23,7 +23,7 @@ import org.schabi.newpipe.extractor.playlist.PlaylistInfo
 //@Serializable data class PageToken()
 
 //@OptIn(ExperimentalSerializationApi::class)
-//@JsonClassDiscriminator("type")
+//@JsonClassDiscriminator("plugins.type")
 @Serializable sealed class NextPage : JsonSerializable {
     abstract val service : String
     abstract val page : org.schabi.newpipe.extractor.Page?

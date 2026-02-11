@@ -1,6 +1,7 @@
-package plugins
+package capabilities
 
 
+import CanNotCreateDirectory
 import com.ibm.icu.text.Normalizer2
 import org.apache.lucene.analysis.Analyzer
 import org.apache.lucene.analysis.core.LowerCaseFilter
@@ -44,7 +45,6 @@ class MultiLangAnalyzer : Analyzer() {
         }
 }
 
-class CanNotCreateDirectory(path : String) : Exception("Unable to create directory: $path (maybe permission issue)")
 class DocumentsIndex(val path : String, val uniqueFieldName : String,  val pageSize : Int = 20, val analyzer : Analyzer = MultiLangAnalyzer()) : AutoCloseable {
     init {
         File(path).apply {

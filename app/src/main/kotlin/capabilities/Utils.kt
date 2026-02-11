@@ -2,14 +2,13 @@ package capabilities
 
 import java.lang.Exception
 
-val DEBUG = System.getenv("DEBUG")=="true"
 fun <T , O> List<T>.attemptUntilOneSucceeds(func : (T)->O) : O? {
     forEach {
         runCatching {
             try {
                 func(it)
             } catch (e : Exception) {
-                if(DEBUG)
+                if(BuildInfo.isDebug)
                     println(e.stackTraceToString())
                 throw e
             }
@@ -18,14 +17,6 @@ fun <T , O> List<T>.attemptUntilOneSucceeds(func : (T)->O) : O? {
     return null
 }
 
-//fun <T , O> List<T>.attemptUntilOneSucceeds(func : (T)->O) : O? =
-//    forEachIndexed { index, it ->
-//        println("INDEX = $index")
-//        runCatching {
-//            func(it)
-//        }.onSuccess {
-//            return it
-//        }
-//    }.let {
-//        null
-//    }
+fun <T> Try(func : ()->T) : T? =
+    try { func() } catch (e : kotlin.Exception) { null }
+

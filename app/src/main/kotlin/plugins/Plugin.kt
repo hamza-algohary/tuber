@@ -1,13 +1,17 @@
+package plugins
+
+import UnknownServiceName
+import capabilities.Try
 import capabilities.attemptUntilOneSucceeds
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.text.TextContentRenderer
 import org.jsoup.Jsoup
 
 class Plugin(
-    infoProviders : List<InfoProvider> ,
-    moreItemsProvider: List<MoreItemsProvider> ,
-    searchProviders : List<SearchProvider> ,
-    catalogProviders: List<CatalogProvider> ,
+    infoProviders : List<InfoProvider> = emptyList(),
+    moreItemsProvider: List<MoreItemsProvider> = emptyList(),
+    searchProviders : List<SearchProvider> = emptyList(),
+    catalogProviders: List<CatalogProvider> = emptyList(),
     categories : List<String> = emptyList(),
     val init : ()->Unit = {} ,
     val condition : ()->Boolean = {true} ,
@@ -132,6 +136,20 @@ fun Info.PlaylistInfo.iter(moreItemsProviders : List<MoreItemsProvider>) =
             }
         }
     }
+
+fun Plugin.searchProviderFromName(name : String) = searchProviders.find { it.name == name }?: throw UnknownServiceName(name)
+fun Plugin.catalogProviderFromName(name : String) = catalogProviders.find { it.name == name }?: throw UnknownServiceName(name)
+fun InfoProvider.infoFromUrl(url : String) : Info? =
+    Try { stream(url) } ?: Try { playlist(url) } ?: Try { channel(url) }
+fun Plugin.infoFromUrl(url : String) =
+    infoProviders.attemptUntilOneSucceeds { provider -> provider.infoFromUrl(url) }
+operator fun Plugin.plus(other : Plugin) =
+    Plugin(
+        infoProviders + other.infoProviders,
+        moreItemsProvider + other.moreItemsProvider,
+        searchProviders + other.searchProviders ,
+        catalogProviders + other.catalogProviders
+    )
 
 
 
