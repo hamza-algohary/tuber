@@ -33,7 +33,7 @@ private object GitHub {
 
 /** The two functions here are ChatGPT generated an untested. Good Luck :D */
 private object Git {
-    fun allChangesAreCommitted(): Boolean = shellJob("git", "status", "--porcelain")?.output.isNullOrBlank()
+    fun allChangesAreCommitted(): Boolean = shellJob("git", "status", "--porcelain" , "--untracked-files=no")?.output.isNullOrBlank()
     fun hasUnpushedCommitsOrNoUpstream(): Boolean =
         shellJob("git", "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}")
             ?.let {
