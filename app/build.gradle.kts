@@ -163,6 +163,7 @@ application {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+
     testLogging {
         events(
             org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED,
@@ -172,8 +173,12 @@ tasks.named<Test>("test") {
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
         showExceptions = true
         showStackTraces = true
+
+        /** Uncomment to show tests output in terminal */
+        /*
         showCauses = true
         showStandardStreams = true  // shows println() output
+        */
     }
 }
 
@@ -182,7 +187,7 @@ tasks.register<JavaExec>("release") {
     description = "create a new release on GitHub"
     classpath = sourceSets["main"].runtimeClasspath
     mainClass.set("tasks.Release")
-    dependsOn("build","test")
+    dependsOn("compileKotlin","compileJava","build","test")
 }
 
 //

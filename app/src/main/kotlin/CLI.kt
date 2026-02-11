@@ -45,7 +45,7 @@ object CLI : CliktCommand() {
             SearchProviders(), Search(), More(), StreamCommand(), Playlist(), Channel(), Filters(),
             SortOptions(), Catalog(), Catalogs(), Help(), PreparePodcastindex(), ListsCommand(),
             ListAdd(), ListRemove(), ListSearch(), ListChannels(), ListServices(), ListImport(),
-            ListExport(), ListDelete(), ListReindex(),
+            ListExport(), ListDelete(), ListReindex(), VersionCommand(),
         )
     }
     operator fun invoke(args : Array<String>) {

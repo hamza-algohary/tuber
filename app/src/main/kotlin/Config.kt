@@ -29,7 +29,7 @@ object BuildInfo {
         else                 -> patch - other.patch
     }
     val currentVersion = Version(0,1,0)
-    val currentReleaseNotes = getReleaseNotesForVersion(currentVersion)?.notes
+    val currentReleaseNotes get() = getReleaseNotesForVersion(currentVersion)?.notes
 
     val isDebug by lazy {
         System.getenv("DEBUG") == "true"
