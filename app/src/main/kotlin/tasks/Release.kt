@@ -2,7 +2,9 @@ package tasks
 
 import BuildInfo
 import BuildInfo.compareTo
+import capabilities.run
 import capabilities.shell
+import capabilities.wait
 import com.github.ajalt.clikt.core.PrintMessage
 import java.io.File
 import kotlin.system.exitProcess
@@ -16,10 +18,10 @@ private fun shellJob(vararg command : String , workingDir: File? = null , timeOu
 private object GitHub {
     /** GitHub draft release */
     fun release(assets : List<Asset>, tag : String, releaseNotesMD : String) =
-        shellJob(
+        ProcessBuilder(
             "gh","release","create",tag,"--draft","--fail-on-no-commits","--notes",releaseNotesMD,
             *assets.map { "${it.path}#${it.displayName}" }.toTypedArray() ,
-        )
+        ).redirectErrorStream(true).inheritIO().run().wait()
 
     fun latestReleaseVersion() : BuildInfo.Version =
         shellJob("gh", "release", "view", "--json", "tagName", "-q", ".tagName")?.output?.trim()?.split(".")?.runCatching {
@@ -78,10 +80,10 @@ object Release {
             check (Git.allCommitArePushed() , "All commits are pushed" , "Some commits are not pushed."),
         ) onTrue {
             println("Running gh release")
-//            GitHub.release(assets , BuildInfo.currentVersion.toString() , releaseNotes)?.apply {
-//                println("gh release exitCode = $exitCode")
-//                assert (exitCode == 0)  { error }
-//            } ?: error("`gh release` command wait timeout")
+            GitHub.release(assets , BuildInfo.currentVersion.toString() , releaseNotes)?.apply {
+                println("gh release exitCode = $exitCode")
+                assert (exitCode == 0)  { error }
+            } ?: error("`gh release` command wait timeout")
         } onFalse {
             println(red("Failed to create release. Ensure all conditions above are met then retry."))
         }
