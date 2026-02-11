@@ -76,7 +76,6 @@ object Release {
             check (releaseNotes.isNotBlank() , "Release notes exist" , "Release notes for ${BuildInfo.currentVersion} not available"),
             check (Git.allChangesAreCommitted() , "All changes are commited", "There are some uncommited changes, run `git status --porcelain` to see them"),
             check (Git.allCommitArePushed() , "All commits are pushed" , "Some commits are not pushed."),
-            check (1 == 0 , "Parallel  Universe", "Our Universe."),
         ) onTrue {
             println("Running gh release")
 //            GitHub.release(assets , BuildInfo.currentVersion.toString() , releaseNotes)?.apply {
