@@ -16,6 +16,7 @@ import org.schabi.newpipe.extractor.*
 import org.schabi.newpipe.extractor.channel.tabs.ChannelTabInfo
 import org.schabi.newpipe.extractor.kiosk.KioskInfo
 import org.schabi.newpipe.extractor.stream.*
+import plugins.ContentType
 import java.time.LocalTime
 import java.time.ZoneOffset
 
@@ -273,6 +274,9 @@ fun SearchResult.toPlaylistInfo(name : String , service : StreamingService , pla
         items , uploader = null , subUploader = null , thumbnails = emptyList() , banners = emptyList() , playlistType = playlistType , null
     )
 
+
+
+
 // ================= Helper Classes ======================
 fun Image.toThumbnail() : Thumbnail =
     Thumbnail(url, width, height)
@@ -314,6 +318,14 @@ fun Description.toFormattedText() : FormattedText =
         Description.MARKDOWN -> FormattedText.Markdown(content)
         Description.PLAIN_TEXT -> FormattedText.Plain(content)
         else -> FormattedText.Plain(content)
+    }
+
+fun StreamingService.ServiceInfo.MediaCapability.toContentTypes() : List<ContentType> =
+    when (this) {
+        StreamingService.ServiceInfo.MediaCapability.AUDIO -> listOf(ContentType.AUDIO)
+        StreamingService.ServiceInfo.MediaCapability.VIDEO-> listOf(ContentType.VIDEO)
+        StreamingService.ServiceInfo.MediaCapability.LIVE -> listOf(ContentType.LIVE_AUDIO , ContentType.LIVE_VIDEO)
+        StreamingService.ServiceInfo.MediaCapability.COMMENTS -> emptyList()
     }
 
 

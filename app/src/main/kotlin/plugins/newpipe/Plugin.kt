@@ -14,6 +14,8 @@ import org.schabi.newpipe.extractor.channel.ChannelInfo
 import org.schabi.newpipe.extractor.kiosk.KioskInfo
 import org.schabi.newpipe.extractor.playlist.PlaylistInfo
 import org.schabi.newpipe.extractor.stream.*
+import plugins.ContentType
+import plugins.SearchProviderInfo
 
 private val YouTube = ServiceList.YouTube.asSearchProvider()
 private val PeerTube = ServiceList.PeerTube.asSearchProvider()
@@ -66,7 +68,7 @@ internal fun serviceFromId(id : Int) =
         throw UnidentifiableService("Service ID doesn't match any NewPipe registered service. THIS SHOULD NEVER HAPPEN")
 val InfoItem.service get() = serviceFromId(serviceId)
 
-public val StreamingService.name get() : String =
+val StreamingService.name get() : String =
     when(this) {
         ServiceList.YouTube -> "youtube"
         ServiceList.PeerTube -> "peertube"
@@ -76,12 +78,36 @@ public val StreamingService.name get() : String =
         else -> throw Exception("Service is unregistered: This should never happen!!")
     }
 
+val StreamingService.displayName get() : String =
+    when(this) {
+        ServiceList.YouTube -> "YouTube"
+        ServiceList.PeerTube -> "PeerTube"
+        ServiceList.SoundCloud  -> "SoundCloud"
+        ServiceList.Bandcamp -> "BandCamp"
+        ServiceList.MediaCCC -> "MediaCCC"
+        else -> throw Exception("Service is unregistered: This should never happen!!")
+    }
+
 private fun StreamingService.asSearchProvider() : SearchProvider =
     object : SearchProvider {
-        override val name = this@asSearchProvider.name
+        //val name = this@asSearchProvider.name
         override fun search(query: String , filters : List<String> , sortBy: String) = this@asSearchProvider.search(query , filters , sortBy)
-        override fun filters() = this@asSearchProvider.contentFilters()
-        override fun sortOptions() = this@asSearchProvider.sortFilters()
+//        fun filters() = this@asSearchProvider.contentFilters()
+//        fun sortOptions() = this@asSearchProvider.sortFilters()
+        override fun info() =
+            SearchProviderInfo(
+                name = name,
+                displayName = displayName,
+                url = baseUrl,
+                iconName = null,
+                symbolicIconName = null,
+                symbolicIconUrl = null,
+                iconUrl = null,
+                filters = contentFilters(),
+                sortOptions = sortFilters(),
+                contentTypes = contentTypes(),
+                contentCategories = emptyList()
+            )
 //        override fun kiosks() = this@asSearchProvider.kiosks()
 //        override fun kiosk(name: String) = plugins.Items(emptyList(),null)
     }
@@ -103,6 +129,9 @@ fun StreamingService.contentFilters() : List<String> =
 
 fun StreamingService.sortFilters() : List<String> =
     this.searchQHFactory.availableSortFilter.toList()
+
+fun StreamingService.contentTypes() : List<ContentType> =
+    serviceInfo.mediaCapabilities.flatMap { it.toContentTypes() }
 
 fun StreamingService.toCatalogProvider(keywords : List<String> = listOf("trending","games","news","sports")) =
     object : CatalogProvider {

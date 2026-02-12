@@ -4,6 +4,25 @@ import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@Serializable data class SearchProviderInfo(
+    val name : String,
+    val displayName : String,
+    val url : String?,
+
+    /** From System Icon Theme */
+    val iconName : String?,
+    /** From System Icon Theme */
+    val symbolicIconName : String?,
+    /** URL may be local path */
+    val symbolicIconUrl : Thumbnail?,
+    /** URL may be local path */
+    val iconUrl : Thumbnail?,
+
+    val filters : List<String>,
+    val sortOptions : List<String>,
+    val contentTypes : List<ContentType>,
+    val contentCategories : List<ContentCategory>,
+)
 
 @Serializable
 data class SearchResult (
@@ -26,13 +45,13 @@ sealed class Summary {
     abstract val thumbnails : List<Thumbnail>
     abstract val service : String?
     abstract val description : FormattedText?
-    abstract val categories : List<Category>
+    abstract val categories : List<ContentCategory>
     abstract val related : List<Related>
     @Serializable
     @SerialName("stream")
     data class StreamSummary(
         override val name : String?, override val url : String?, override val thumbnails : List<Thumbnail>, override val service: String?,
-        override val categories: List<Category>,
+        override val categories: List<ContentCategory>,
         override val related: List<Related>,
         val streamType : StreamType?,
         val duration : Long?,
@@ -46,7 +65,7 @@ sealed class Summary {
     @SerialName("playlist")
     data class PlaylistSummary(
         override val name : String?, override val url : String?, override val thumbnails : List<Thumbnail>, override val service: String?,
-        override val categories: List<Category>,
+        override val categories: List<ContentCategory>,
         override val related: List<Related>,
         val uploader: ChannelSummary?,
         val numberOfItems: Long?,
@@ -58,7 +77,7 @@ sealed class Summary {
     @SerialName("channel")
     data class ChannelSummary(
         override val name : String?, override val url : String?, override val thumbnails : List<Thumbnail>, override val service: String?,
-        override val categories: List<Category>,
+        override val categories: List<ContentCategory>,
         override val related: List<Related>,
         val verified: Boolean?,
         override val description : FormattedText?,
@@ -73,7 +92,7 @@ sealed class Summary {
         override val url : String?,
         override val thumbnails : List<Thumbnail>,
         override val service: String?,
-        override val categories: List<Category>,
+        override val categories: List<ContentCategory>,
         override val related: List<Related>,
         override val description : FormattedText?,
     ) : Summary()
@@ -88,7 +107,7 @@ sealed class Info {
     abstract val url : String?
     abstract val originalUrl : String?
     abstract val service : String?
-    abstract val categories : List<Category>
+    abstract val categories : List<ContentCategory>
     abstract val related : List<Related>
     @SerialName("stream")
     @Serializable data class StreamInfo(
@@ -97,7 +116,7 @@ sealed class Info {
         override val url: String?,
         override val originalUrl: String?,
         override val service: String?,
-        override val categories: List<Category>,
+        override val categories: List<ContentCategory>,
         override val related: List<Related>,
 
         val streamType: StreamType?,
@@ -138,7 +157,7 @@ sealed class Info {
         override val url: String?,
         override val originalUrl: String?,
         override val service: String?,
-        override val categories: List<Category>,
+        override val categories: List<ContentCategory>,
         override val related: List<Related>,
 
         val description: FormattedText?,
@@ -157,11 +176,11 @@ sealed class Info {
         override val url: String?,
         override val originalUrl: String?,
         override val service: String?,
-        override val categories: List<Category>,
+        override val categories: List<ContentCategory>,
         override val related: List<Related>,
 
         val parentChannel : Summary.ChannelSummary?,
-        val avatars : List<Thumbnail> ,
+        val avatars : List<Thumbnail>,
         val verified: Boolean?,
         val description: FormattedText?,
         val subscriberCount: Long?,
@@ -170,7 +189,7 @@ sealed class Info {
         val donationLinks : List<String>,
         val tags : List<String>,
         /** Probably RSS? */
-        val feedUrl : String? ,
+        val feedUrl : String?,
         val tabs : List<PlaylistInfo>
     ) : Info()
 }
@@ -224,8 +243,13 @@ enum class Relation {
 }
 
 @Serializable
-enum class Category {
-    PODCAST,MOVIE,SERIES,ANIME,INTERNET_CHANNEL,CABLE_CHANNEL,RADIO
+enum class ContentCategory {
+    PODCAST,MUSIC,MOVIE,SERIES,ANIME,IPTV,CABLE_CHANNEL,RADIO
+}
+
+@Serializable
+enum class ContentType {
+    CHANNEL,PLAYLIST,VIDEO,AUDIO,LIVE_VIDEO,LIVE_AUDIO,SHORTS
 }
 
 @Serializable

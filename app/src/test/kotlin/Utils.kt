@@ -37,16 +37,16 @@ fun Plugin.testSearch() {
     searchProviders.forEach {
         try {
             it.search("linux").let { results ->
-                if(results.items.items.isEmpty()) warning("service ${it.name} search returned empty list")
-                else good("service ${it.name} search returned some results")
+                if(results.items.items.isEmpty()) warning("service ${it.info().name} search returned empty list")
+                else good("service ${it.info().name} search returned some results")
                 Backend.plugins.moreItemsProvider.attemptUntilOneSucceeds { provider ->
                     results.items.nextPageToken?.let { token ->
                         provider.moreItems(token)?.let{ good("Next page token is fine") }?:error("Next page token is not fine")
-                    } ?: warning("Next page for search of ${it.name} is null")
-                } ?: error("Unable to get to next page for service: ${it.name}")
+                    } ?: warning("Next page for search of ${it.info().name} is null")
+                } ?: error("Unable to get to next page for service: ${it.info().name}")
             }
         } catch (e:Exception) {
-            error("${it.name} search threw exception: ${e.stackTraceToString()}")
+            error("${it.info().name} search threw exception: ${e.stackTraceToString()}")
             null
         }
     }

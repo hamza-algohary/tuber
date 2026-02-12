@@ -1,6 +1,6 @@
 package plugins.podcastindex
 
-import plugins.Category
+import plugins.ContentCategory
 import plugins.FormattedText
 import plugins.FormattedText.Plain
 import plugins.Items
@@ -26,7 +26,7 @@ fun ResultSet.toSummary() : Summary =
         url = getString("url"),
         thumbnails = listOfNotNull(getString("imageUrl").asThumbnailUrl()),
         service = pluginName,
-        categories = listOf(Category.PODCAST),
+        categories = listOf(ContentCategory.PODCAST),
         related = emptyList(),
         description = FormattedText.HTML(getString("description")),
         uploader = null,

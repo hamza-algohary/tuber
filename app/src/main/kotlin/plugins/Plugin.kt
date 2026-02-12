@@ -52,10 +52,11 @@ interface MoreItemsProvider {
 }
 
 interface SearchProvider {
-    val name : String
+    //val name : String
     fun search(query : String , filters : List<String> = emptyList() , sortBy : String = "") : SearchResult
-    fun filters() : List<String>
-    fun sortOptions() : List<String>
+    //fun filters() : List<String>
+    //fun sortOptions() : List<String>
+    fun info() : SearchProviderInfo
 }
 
 interface CatalogProvider {
@@ -137,7 +138,7 @@ fun Info.PlaylistInfo.iter(moreItemsProviders : List<MoreItemsProvider>) =
         }
     }
 
-fun Plugin.searchProviderFromName(name : String) = searchProviders.find { it.name == name }?: throw UnknownServiceName(name)
+fun Plugin.searchProviderFromName(name : String) = searchProviders.find { it.info().name == name }?: throw UnknownServiceName(name)
 fun Plugin.catalogProviderFromName(name : String) = catalogProviders.find { it.name == name }?: throw UnknownServiceName(name)
 fun InfoProvider.infoFromUrl(url : String) : Info? =
     Try { stream(url) } ?: Try { playlist(url) } ?: Try { channel(url) }

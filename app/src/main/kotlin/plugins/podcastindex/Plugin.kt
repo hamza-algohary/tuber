@@ -13,6 +13,9 @@ import plugins.SearchResult
 import capabilities.Lists
 import capabilities.Page
 import capabilities.toItems
+import plugins.ContentCategory
+import plugins.ContentType
+import plugins.SearchProviderInfo
 
 
 const val pluginName = "podcastindex"
@@ -27,8 +30,23 @@ class PodcastIndex(val luceneIndexPath : String) : SearchProvider , MoreItemsPro
         lists.search(pluginName , query).toSearchResult()
     override fun moreItems(pageToken: String): Items =
         lists.getPage(Json.decodeFromString<Page>(pageToken)).toItems()
-    override fun filters() : List<String> = emptyList()
-    override fun sortOptions(): List<String> = emptyList()
+
+    override fun info() =
+        SearchProviderInfo(
+            name = name,
+            displayName = "Podcast Index",
+            url = "https://podcastindex.org/",
+            iconName = null,
+            symbolicIconName = null,
+            symbolicIconUrl = null,
+            iconUrl = null,
+            filters = emptyList(),
+            sortOptions = emptyList(),
+            contentTypes = listOf(ContentType.PLAYLIST),
+            contentCategories = listOf(ContentCategory.PODCAST)
+        )
+//    fun filters() : List<String> = emptyList()
+//    fun sortOptions(): List<String> = emptyList()
 }
 
 fun PodcastIndex.toPlugin() = let {

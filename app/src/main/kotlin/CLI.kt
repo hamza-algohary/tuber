@@ -56,7 +56,7 @@ object CLI : CliktCommand() {
 
 class SearchProviders : CliktCommand(name = "search-providers") {
     override fun run() {
-        Backend.plugins.searchProviders.map { it.name }.toJson().println()
+        Backend.plugins.searchProviders.map { it.info() }.toJson().println()
     }
 }
 
@@ -117,14 +117,14 @@ class Channel : CliktCommand(name = "channel") {
 class Filters : CliktCommand(name = "filters") {
     private val searchProvider : String by argument("search-provider")
     override fun run() {
-        Backend.plugins.searchProviderFromName(searchProvider).filters().toJson().println()
+        Backend.plugins.searchProviderFromName(searchProvider).info().filters.toJson().println()
     }
 }
 
 class SortOptions : CliktCommand(name = "sort-options") {
     private val searchProvider : String by argument("search-provider")
     override fun run() {
-        Backend.plugins.searchProviderFromName(searchProvider).sortOptions().toJson().println()
+        Backend.plugins.searchProviderFromName(searchProvider).info().sortOptions.toJson().println()
     }
 }
 
