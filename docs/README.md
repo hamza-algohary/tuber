@@ -33,7 +33,7 @@ Run `tuber help` to all available endpoints and their return values. Do **NOT** 
 
 ## Guidelines, Examples and Suggestions
 ### The Schema
-All the data types you will have to deal with are in [Schema.kt](app/src/main/kotlin/plugins/Schema.kt)
+All the data types you will have to deal with are in [Schema.kt](../app/src/main/kotlin/plugins/Schema.kt)
 
 All objects are exchanged by JSON.
 
@@ -120,7 +120,7 @@ Make use of this result to build a suitable progressbar.
 Some long operations like `list-import` and `list-export` still have not implemented Progress reporting.
 
 ### Error Reporting
-All possible errors are in [Errors.kt](app/src/main/kotlin/Errors.kt). Each error has a different exit code, error messages are reported in **stderr**. Any operation returning non-zero exit value, should be treated as an error. Unknown errors are given exit code `1`. 
+All possible errors are in [Errors.kt](../app/src/main/kotlin/Errors.kt). Each error has a different exit code, error messages are reported in **stderr**. Any operation returning non-zero exit value, should be treated as an error. Unknown errors are given exit code `1`. 
 
 ### Debugging and Bug Reporting
 In case of unknown error, or unexpected behavior, plesae rerun the program with environment variable `DEBUG=true`.
