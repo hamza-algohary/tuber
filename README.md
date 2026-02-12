@@ -2,7 +2,7 @@
 
 Tuber is a CLI frontend for YouTube, PeerTube, SoundCloud and other sites, powered by the fantastic [NewPipeExtractor](https://github.com/TeamNewPipe/NewPipeExtractor) java library.
 
-Moreover, tuber is suitable for usage as a plugins since all its output is in JSON format.
+Moreover, tuber is suitable for usage as a backend since all its output is in JSON format.
 
 ### Installation
 1. Clone this repo
