@@ -152,8 +152,8 @@ fun NewPipeStreamInfo.toStreamInfo() : Info.StreamInfo =
         audioStreams?.map { it.toAudio() }?:emptyList(),
         videoOnlyStreams?.map { it.toVideo() }?:emptyList(),
         subtitles?.map { it.toSubtitles() }?:emptyList(),
-        hlsLink = hlsUrl,
-        dashLink = dashMpdUrl
+        hlsUrl = hlsUrl,
+        dashUrl = dashMpdUrl
     )
 fun NewPipePlaylistInfo.toPlaylistInfo() : Info.PlaylistInfo =
     Info.PlaylistInfo(

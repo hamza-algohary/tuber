@@ -128,8 +128,8 @@ sealed class Info {
         val audioStreams: List<Stream.Audio>,
         val videoOnlyStreams: List<Stream.Video>,
         val subtitles: List<Stream.Subtitles>,
-        val hlsLink: String?,
-        val dashLink: String?,
+        val hlsUrl: String?,
+        val dashUrl: String?,
     ) : Info()
     @SerialName("playlist")
     @Serializable data class PlaylistInfo(

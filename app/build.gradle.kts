@@ -114,6 +114,7 @@ java {
 
 application {
     // Define the main class for the application.
+    applicationName = "tuber"
     mainClass = "AppKt"
 //    applicationDefaultJvmArgs += listOf("--add-modules", "jdk.incubator.vector")
 }

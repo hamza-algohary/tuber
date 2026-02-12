@@ -81,6 +81,6 @@ fun RssItem.toStreamInfo() =
         } ?: emptyList(),
         videoOnlyStreams = emptyList(),
         subtitles = emptyList(),
-        hlsLink = null,
-        dashLink = null
+        hlsUrl = null,
+        dashUrl = null
     )
