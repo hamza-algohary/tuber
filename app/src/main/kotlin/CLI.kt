@@ -39,13 +39,14 @@ private fun String.print() = print(this)
 
 object CLI : CliktCommand() {
     override fun run() = Unit
-    override fun help(context: Context) = Help().message
+    //override fun help(context: Context) = Help().message
     init {
         subcommands(
-            SearchProviders(), Search(), More(), StreamCommand(), Playlist(), Channel(), Filters(),
-            SortOptions(), Catalog(), Catalogs(), Help(), PreparePodcastindex(), ListsCommand(),
+            SearchProviders(), Search(), More(), StreamCommand(), Playlist(), Channel(),
+            Catalog(), Catalogs(), Help(), PreparePodcastindex(), ListsCommand(),
             ListAdd(), ListRemove(), ListSearch(), ListChannels(), ListServices(), ListImport(),
             ListExport(), ListDelete(), ListReindex(), VersionCommand(),
+            /** Filters(), SortOptions(),*/
         )
     }
     operator fun invoke(args : Array<String>) {
@@ -266,11 +267,12 @@ class Help : CliktCommand(name = "help") {
     val repo = "https://github.com/hamza-algohary/tuber"
     val message = """
     Visit $repo for more details.
+        version                                         -> Tuber version (Major.Minor.Patch)
     Search Commands:
-        search-providers                                -> List<String> 
+        search-providers                                -> List<SearchProviderInfo> 
         search <search provider> <query> [--filters <colon separated list>] [--sort <criteria>] -> plugins.SearchResult
-        filters  <search provider>                      -> List<String>
-        sort-options <search provider>                  -> List<String>
+        [DO NOT USE] filters  <search provider>                      -> List<String> [OLD API, NOT AVAILABLE ANY MORE. Use info provided by SearchProviderInfo instead]
+        [DO NOT USE] sort-options <search provider>                  -> List<String> [OLD API, NOT AVAILABLE ANY MORE. Use info provided by SearchProviderInfo instead]
     Url Handlers:
         stream   <url>                                  -> StreamInfo
         playlist <url>                                  -> PlaylistInfo

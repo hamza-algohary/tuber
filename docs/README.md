@@ -37,12 +37,10 @@ All the data types you will have to deal with are in [Schema.kt](../app/src/main
 
 All objects are exchanged in JSON format.
 
-### The search life-cycle
+### The search life-cycle 
 Typically searching is done by using the following calls in order
-1. `search-providers` to get available search providers (eg: YouTube,SoundCloud, etc.).
-2. `filters <search provider>` to get filters provided by `search provider`.
-3. `sort-options <search provider>` to get sort options provided by `search provider`.
-4. `search <search provider> <query>` to search inside a specific search provider. Optionally using `--filters` to apply a colon separated list of filters, and `--sort` to use a sort criteria (a single one)
+1. `search-providers` to get available search providers (eg: YouTube,SoundCloud, etc.), and their info, capabilities, filters and such. See `SearchProviderInfo` for more.
+2. `search <search provider> <query>` to search inside a specific search provider. Optionally using `--filters` to apply a colon separated list of filters, and `--sort` to use a sort criteria (a single one)
 
 Example
 ```bash
