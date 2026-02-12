@@ -54,7 +54,7 @@ private fun green(str: String) = "\u001B[92m$str\u001B[0m"
 
 object Release {
     private val assets = assets(
-        "build/distributions/app.zip" to "tuber.zip"
+        "build/distributions/tuber.zip" to "tuber.zip"
     )
 
     @JvmStatic
