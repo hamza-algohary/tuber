@@ -9,4 +9,5 @@ test:
 clean:
 	rm tuber.zip
 
-release:
+get-auto-release-notes:
+	gh api repos/:owner/:repo/compare/$$(gh release view --json tagName -q .tagName)...HEAD --jq '.commits[].commit.message'

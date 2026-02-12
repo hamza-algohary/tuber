@@ -28,7 +28,7 @@ object BuildInfo {
         minor != other.minor -> minor - other.minor
         else                 -> patch - other.patch
     }
-    val currentVersion = Version(0,1,0)
+    val currentVersion = Version(0,1,1)
     val currentReleaseNotes get() = getReleaseNotesForVersion(currentVersion)?.notes
 
     val isDebug by lazy {
@@ -37,7 +37,14 @@ object BuildInfo {
 
     data class ReleaseNotes(val version: Version , val notes : FormattedText)
     val releaseNotesForAllVersions = listOf<ReleaseNotes>(
-        ReleaseNotes(Version(0,1,0) , plain("First Release hooray \uD83C\uDF89"))
+        ReleaseNotes(Version(0,1,0) , plain("First Release hooray \uD83C\uDF89")),
+        ReleaseNotes(Version(0,1,1) , md("""
+            Changes:
+            - Made the Tuber Developer Manual.
+            - Introduced the `SearchProviderInfo` class.
+            - Removed `filters` and `sort-options` command, as this data is available inside `SearchProviderInfo`.
+        """.trimIndent())),
+
     )
     fun getReleaseNotesForVersion(version: Version) = releaseNotesForAllVersions.find { it.version == version }
 
