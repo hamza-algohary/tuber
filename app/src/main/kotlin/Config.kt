@@ -28,7 +28,7 @@ object BuildInfo {
         minor != other.minor -> minor - other.minor
         else                 -> patch - other.patch
     }
-    val currentVersion = Version(0,1,1)
+    val currentVersion = Version(0,1,2)
     val currentReleaseNotes get() = getReleaseNotesForVersion(currentVersion)?.notes
 
     val isDebug by lazy {
