@@ -34,6 +34,7 @@ object BuildInfo {
     val isDebug by lazy {
         System.getenv("DEBUG") == "true"
     }
+    var isTest = false
 
     data class ReleaseNotes(val version: Version , val notes : FormattedText)
     val releaseNotesForAllVersions = listOf<ReleaseNotes>(
@@ -43,6 +44,10 @@ object BuildInfo {
             - Made the Tuber Developer Manual.
             - Introduced the `SearchProviderInfo` class.
             - Removed `filters` and `sort-options` command, as this data is available inside `SearchProviderInfo`.
+        """.trimIndent())),
+        ReleaseNotes(Version(0,1,2) , md("""
+            Changes:
+            - Added a hack to fix the app hanging after retrieving rss url. (Needs a real solution later though)
         """.trimIndent())),
 
     )

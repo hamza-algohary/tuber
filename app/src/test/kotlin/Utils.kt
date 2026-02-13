@@ -20,6 +20,7 @@ fun withStreams(
 
 fun testMain(vararg args : String , testName : String) {
     File("test_results").mkdirs()
+    BuildInfo.isTest = true
     withStreams (out = PrintStream(FileOutputStream("test_results/$testName")) ) {
         main(args.map{it}.toTypedArray())
     }

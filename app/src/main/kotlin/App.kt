@@ -12,9 +12,18 @@ object Backend {
     val plugins = newpipePlugin + podcastindex.toPlugin() + RssUrlHandler + M3uUrlHandler
 }
 
-fun main(args: Array<String>) =
+fun main(args: Array<String>) {
     runBlocking {
         handleCLIExceptions {
             CLI(args)
         }
     }
+
+    /**
+     * The following line, superficially solves a problem with RSS causing main to just hand doing nothing.
+     * Actual cause need to identified though, this is just a hack.
+     */
+    if (!BuildInfo.isTest)
+        System.exit(0);
+
+}
