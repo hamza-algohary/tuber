@@ -14,4 +14,6 @@ class CLITest {
     @Test fun testCLIRssUrlHandling() = testMain("playlist","https://runtube.re/feeds/videos.xml?videoChannelId=34652" , testName = "rss_url_handling.json")
 
     @Test fun testSearchProviders() = testMain("search-providers", testName = "search_providers.json")
+
+    @Test fun testVersion() = testMain("version", testName = "version.json")
 }

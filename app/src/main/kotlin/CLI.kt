@@ -267,7 +267,7 @@ class Help : CliktCommand(name = "help") {
     val repo = "https://github.com/hamza-algohary/tuber"
     val message = """
     Visit $repo for more details.
-        version                                         -> Tuber version (Major.Minor.Patch)
+        version                                         -> Version
     Search Commands:
         search-providers                                -> List<SearchProviderInfo> 
         search <search provider> <query> [--filters <colon separated list>] [--sort <criteria>] -> plugins.SearchResult

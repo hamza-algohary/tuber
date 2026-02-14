@@ -1,3 +1,4 @@
+import kotlinx.serialization.Serializable
 import plugins.FormattedText
 
 
@@ -20,6 +21,7 @@ fun get_XDG_HOME() =
 //fun env(variable : String) = System.getenv(variable)?.takeIf { it.isNotEmpty() }
 
 object BuildInfo {
+    @Serializable
     data class Version(val major: Int, val minor: Int, val patch: Int) {
         override fun toString(): String = "$major.$minor.$patch"
     }
@@ -28,7 +30,7 @@ object BuildInfo {
         minor != other.minor -> minor - other.minor
         else                 -> patch - other.patch
     }
-    val currentVersion = Version(0,1,2)
+    val currentVersion = Version(0,1,3)
     val currentReleaseNotes get() = getReleaseNotesForVersion(currentVersion)?.notes
 
     val isDebug by lazy {
@@ -49,7 +51,10 @@ object BuildInfo {
             Changes:
             - Added a hack to fix the app hanging after retrieving rss url. (Needs a real solution later though)
         """.trimIndent())),
-
+        ReleaseNotes(Version(0,1,3) , md("""
+            Changes:
+            - Fixed `version` commands. 
+        """.trimIndent())),
     )
     fun getReleaseNotesForVersion(version: Version) = releaseNotesForAllVersions.find { it.version == version }
 
