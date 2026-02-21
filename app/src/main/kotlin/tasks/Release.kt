@@ -82,6 +82,7 @@ object Release {
             println("Running gh release")
             GitHub.release(assets , BuildInfo.currentVersion.toString() , releaseNotes)?.apply {
                 println("gh release exitCode = $exitCode")
+                println("Draft release created. Head over to ${BuildInfo.upstreamRepoURL}/releases to publish it.")
                 assert (exitCode == 0)  { error }
             } ?: error("`gh release` command wait timeout")
         } onFalse {

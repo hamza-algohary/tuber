@@ -264,9 +264,8 @@ class ListReindex : CliktCommand(name = "list-reindex") {
 
 
 class Help : CliktCommand(name = "help") {
-    val repo = "https://github.com/hamza-algohary/tuber"
     val message = """
-    Visit $repo for more details.
+    Visit ${BuildInfo.upstreamRepoURL} for more details.
         version                                         -> Version
     Search Commands:
         search-providers                                -> List<SearchProviderInfo> 

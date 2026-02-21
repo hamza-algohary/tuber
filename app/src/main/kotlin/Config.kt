@@ -33,6 +33,8 @@ object BuildInfo {
     val currentVersion = Version(0,1,4)
     val currentReleaseNotes get() = getReleaseNotesForVersion(currentVersion)?.notes
 
+    const val upstreamRepoURL = "https://github.com/hamza-algohary/tuber"
+
     val isDebug by lazy {
         System.getenv("DEBUG") == "true"
     }
