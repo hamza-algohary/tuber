@@ -6,19 +6,20 @@ import net.bjoernpetersen.m3u.M3uParser
 import plugins.Plugin
 import plugins.Info
 import plugins.InfoProvider
-import plugins.Summary
 import kotlin.io.path.Path
 
-fun parseM3UPlaylistFromUrl(url : String) : List<Summary.GenericSummary> =
+fun parseM3UPlaylistFromUrl(url : String) : Info.PlaylistInfo =
     M3uParser.parse(resolveUrlToString(url), Path(url))
-        .map { it.toSummary() }
+             .groupBy { it.groupTitle }
+             .map { (groupTitle, entries) -> entries.map { it.toSummary() }.summariesToPlaylistInfo(name = groupTitle , url) }
+             .infosToPlaylistInfo(null , url)
 
 val M3uUrlHandler = Plugin(
     listOf(
         object : InfoProvider {
             override val name = "m3u"
             override fun playlist(url: String): Info.PlaylistInfo =
-                parseM3UPlaylistFromUrl(url).toPlaylistInfo(url)
+                parseM3UPlaylistFromUrl(url)
             override fun stream(url: String) = throw UnableToHandleLinkException(url)
             override fun channel(url: String) = throw UnableToHandleLinkException(url)
         }

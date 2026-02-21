@@ -30,7 +30,7 @@ object BuildInfo {
         minor != other.minor -> minor - other.minor
         else                 -> patch - other.patch
     }
-    val currentVersion = Version(0,1,3)
+    val currentVersion = Version(0,1,4)
     val currentReleaseNotes get() = getReleaseNotesForVersion(currentVersion)?.notes
 
     val isDebug by lazy {
@@ -55,6 +55,11 @@ object BuildInfo {
             Changes:
             - Fixed `version` commands. 
         """.trimIndent())),
+        ReleaseNotes(Version(0,1,4) , md("""
+            Changes:
+            - Enhanced M3U URLs handling, by grouping items inside an M3U playlist by `group-title` into nested playlists.
+            - Now M3U URL Handler returns a playlist of PlaylistInfos (inside detailedItems), which should be obvious from what I said above. 
+        """.trimIndent()))
     )
     fun getReleaseNotesForVersion(version: Version) = releaseNotesForAllVersions.find { it.version == version }
 
