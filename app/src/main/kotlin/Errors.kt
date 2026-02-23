@@ -10,7 +10,7 @@ class UnidentifiableService(message : String)                       : Error(6 , 
 class UnknownServiceName(name : String)                             : Error(7 , "Unknown service name: $name")
 class PageIsNull                                                    : Error(8 , "Page is null")
 class InvalidPageToken                                              : Error(9 , "Invalid page token")
-class CommandNotFoundOrInsuffiecientPermissions(command : String)   : Error(10 , "Command `$command` not found or insufficient permissions")
+class CommandNotFoundOrInsufficientPermissions(command : String)   : Error(10 , "Command `$command` not found or insufficient permissions")
 
 val UNKNOWN_ERROR_EXIT_CODE = 1
 fun handleCLIExceptions(func : ()->Unit) =

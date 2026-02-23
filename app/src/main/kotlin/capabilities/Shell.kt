@@ -1,10 +1,9 @@
 package capabilities
 
-import CommandNotFoundOrInsuffiecientPermissions
+import CommandNotFoundOrInsufficientPermissions
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
-import java.io.OutputStream
 import kotlin.time.Duration
 
 /**
@@ -46,7 +45,7 @@ fun ProcessBuilder.run() =
     try {
         start()
     } catch (e: IOException) {
-        throw CommandNotFoundOrInsuffiecientPermissions(command()[0])
+        throw CommandNotFoundOrInsufficientPermissions(command()[0])
     }
 
 
